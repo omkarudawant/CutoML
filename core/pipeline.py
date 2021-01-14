@@ -1,5 +1,5 @@
 from sklearn.pipeline import Pipeline as Sklearn_pipeline
-from ticket_prioritization import processors
+from core import processors
 
 preprocess_pipeline = Sklearn_pipeline(
     [

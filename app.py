@@ -6,8 +6,8 @@ from fastapi import FastAPI, File, UploadFile
 from pydantic import BaseModel
 from io import BytesIO
 
-from ticket_prioritization.pipeline import preprocess_pipeline
-from ticket_prioritization.processors import display_metrics
+from core.pipeline import preprocess_pipeline
+from core.processors import display_metrics
 from imblearn.pipeline import Pipeline as Imblearn_pipeline
 
 from sklearn.model_selection import train_test_split
