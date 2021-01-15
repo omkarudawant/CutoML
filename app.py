@@ -26,27 +26,50 @@ class ShortDescription(BaseModel):
 
 
 @app.post("/preprocess/")
-def preprocess_data(file: UploadFile = File(...)):
-    if file.filename.endswith((".csv", ".CSV")):
-        csv_file = file.file.read()
-        df = pd.read_csv(BytesIO(csv_file))
-        output = preprocess_pipeline.transform(X=df)
+def preprocess_data(features_file: UploadFile = File(...),
+                    labels_file: UploadFile = File(...)):
+    if features_file.filename.endswith((".csv", ".CSV")) and \
+            labels_file.filename.endswith((".csv", ".CSV")):
 
-        output.to_csv("data/preprocessed_data.csv", index=False)
+        features_csv_file = features_file.file.read()
+        labels_csv_file = labels_file.file.read()
+
+        features_df = pd.read_csv(BytesIO(features_csv_file))
+        labels_df = pd.read_csv(BytesIO(labels_csv_file))
+
+        features_col_name = features_df.columns.tolist()[0]
+        label_col_name = labels_df.columns.tolist()[0]
+
+        df = pd.concat([features_df, labels_df], axis=1)
+        output = preprocess_pipeline.transform(X=df)
+        print(output.head(), features_col_name, label_col_name, output.shape)
+
+        output[features_col_name].to_csv("data/preprocessed_features_data.csv",
+                                         index=False)
+        output[label_col_name].to_csv("data/preprocessed_labels_data.csv",
+                                      index=False)
         return {
-            "Message": "Preprocessed data saved to data/preprocessed_data.csv"
+            "Message": "Preprocessed data saved to data/ directory"
         }
     else:
         return {
-            "Message": "Please upload a csv file"
+            "Message": "Please upload a csv features file and labels file"
         }
 
 
 @app.post("/train/")
-def train_model(file: UploadFile = File(...)):
-    if file.filename.endswith((".csv", ".CSV")):
-        csv_file = file.file.read()
-        df = pd.read_csv(BytesIO(csv_file))
+def train_model(features_file: UploadFile = File(...),
+                labels_file: UploadFile = File(...)):
+    if features_file.filename.endswith((".csv", ".CSV")) and \
+            labels_file.filename.endswith((".csv", ".CSV")):
+
+        features_csv_file = features_file.file.read()
+        labels_csv_file = labels_file.file.read()
+
+        features_df = pd.read_csv(BytesIO(features_csv_file))
+        labels_df = pd.read_csv(BytesIO(labels_csv_file))
+
+        df = pd.concat([features_df, labels_df], axis=1)
         df = df.sample(frac=0.05)
         X = df["short_descriptions"].values.astype("U")
         y = df["priority"]
@@ -85,7 +108,7 @@ def train_model(file: UploadFile = File(...)):
 
     else:
         return {
-            "Message": "Please upload a csv file"
+            "Message": "Please upload a csv features file and labels file"
         }
 
 
@@ -164,7 +187,7 @@ async def batch_predictions(file: UploadFile = File(...)):
             return output
         else:
             return {
-                "Message": "Please upload a csv file"
+                "Message": "Please upload a csv features_file"
             }
 
     except Exception as e:

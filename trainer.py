@@ -203,7 +203,7 @@ def train_model(file):
 
     else:
         return {
-            "Message": "Please upload a csv file"
+            "Message": "Please upload a csv features_file"
         }
 
 if __name__ == "__main__":
