@@ -132,3 +132,4 @@ dmypy.json
 # Few more folders
 research/
 data/
+models/
