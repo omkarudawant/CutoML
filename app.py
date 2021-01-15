@@ -74,7 +74,7 @@ def train_model(features_file: UploadFile = File(...),
 
         df = pd.concat([features_df, labels_df], axis=1)
 
-        df = df.sample(frac=0.05)
+        df = df.sample(frac=0.005)
         X = df[features_col_name].values.astype("U")
         y = df[label_col_name]
 
@@ -126,9 +126,11 @@ async def predict_asgn_group(short_desc: ShortDescription):
         start = time.time()
         try:
             model = joblib.load("models/train_pipeline.joblib")
+            encoder = joblib.load("models/encoder.joblib")
             # TODO: Change filename to persistent storage path
             print(model)
-            prediction_label = model.predict([short_desc.description])
+            prediction_label = encoder.inverse_transform(
+                model.predict([short_desc.description]))
             end = time.time()
             timer(start=start, end=end)
         except FileNotFoundError:
@@ -138,15 +140,13 @@ async def predict_asgn_group(short_desc: ShortDescription):
             prediction_probablity = model.predict_proba(
                 [short_desc.description]
             )
-            print(prediction_probablity)
+
             short_desc_dict.update({
                 "Prediction confidence": str(round(np.max(
                     prediction_probablity), 4) * 100)
             })
         except AttributeError:
             print(model)
-
-        print(prediction_label)
 
         prediction_enc = prediction_label[0]
         short_desc_dict.update({
@@ -171,10 +171,13 @@ async def batch_predictions(file: UploadFile = File(...)):
             start = time.time()
             try:
                 model = joblib.load("models/train_pipeline.joblib")
+                encoder = joblib.load("models/encoder.joblib")
                 # TODO: Change filename to persistent storage path
                 print(model)
                 pred_asgn_grps = model.predict(X)
                 end = time.time()
+                pred_asgn_grps = encoder.inverse_transform(pred_asgn_grps)
+                y = encoder.inverse_transform(y)
                 timer(start=start, end=end)
             except FileNotFoundError:
                 print("Model not trained yet")
