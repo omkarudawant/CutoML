@@ -69,10 +69,14 @@ def train_model(features_file: UploadFile = File(...),
         features_df = pd.read_csv(BytesIO(features_csv_file))
         labels_df = pd.read_csv(BytesIO(labels_csv_file))
 
+        features_col_name = features_df.columns.tolist()[0]
+        label_col_name = labels_df.columns.tolist()[0]
+
         df = pd.concat([features_df, labels_df], axis=1)
+
         df = df.sample(frac=0.05)
-        X = df["short_descriptions"].values.astype("U")
-        y = df["priority"]
+        X = df[features_col_name].values.astype("U")
+        y = df[label_col_name]
 
         model = Trainer(X=X, y=y)
         model.fit_models()
