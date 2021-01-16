@@ -5,6 +5,7 @@ from sklearn.ensemble import RandomForestClassifier
 from xgboost import XGBClassifier
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.svm import LinearSVC
+from sklearn.neighbors import KNeighborsClassifier
 
 from sklearn.model_selection import RandomizedSearchCV
 from sklearn.calibration import CalibratedClassifierCV
@@ -14,9 +15,20 @@ import multiprocessing
 import numpy as np
 
 cross_val = 3
-scorer = make_scorer(roc_auc_score, average='weighted', multi_class='ovr')
 models = [
     MultinomialNB(),
+    RandomizedSearchCV(
+        KNeighborsClassifier(n_jobs=multiprocessing.cpu_count() // 2),
+        param_distributions={
+            'n_neighbors': np.arange(start=1, stop=100, step=10),
+            'weights': ['distance'],
+            'p': [1, 2]
+        },
+        cv=cross_val,
+        random_state=0,
+        verbose=2,
+        n_jobs=multiprocessing.cpu_count() // 2
+    ),
     RandomizedSearchCV(
         LogisticRegression(n_jobs=multiprocessing.cpu_count() // 2,
                            random_state=0),
@@ -27,7 +39,8 @@ models = [
         },
         cv=cross_val,
         random_state=0,
-        verbose=2
+        verbose=2,
+        n_jobs=multiprocessing.cpu_count() // 2
     ),
     RandomizedSearchCV(
         SGDClassifier(n_jobs=multiprocessing.cpu_count() // 2,

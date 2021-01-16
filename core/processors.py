@@ -92,19 +92,19 @@ class CleanText(BaseEstimator, TransformerMixin):
 
         dataframe[self.feature_column_name] = dataframe[
             self.feature_column_name].progress_apply(
-                lambda x: self._clean_text(str(x)))
+            lambda x: self._clean_text(str(x)))
 
-        # dataframe[self.feature_column_name] = dataframe[
-        #     self.feature_column_name].progress_apply(lambda x:
-        #                                      self.preprocess_text(x))
+        dataframe[self.feature_column_name] = dataframe[
+            self.feature_column_name].progress_apply(lambda x:
+                                                     self.preprocess_text(x))
 
         dataframe[self.feature_column_name] = dataframe[
             self.feature_column_name].progress_apply(lambda x: str(x))
 
         dataframe[self.feature_column_name] = dataframe[
             self.feature_column_name][dataframe[
-                self.feature_column_name].progress_apply(
-                    lambda x: len(x.split()) > 2)]
+            self.feature_column_name].progress_apply(
+            lambda x: len(x.split()) > 2)]
 
         dataframe.dropna(inplace=True)
 
