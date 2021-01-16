@@ -15,25 +15,6 @@ import spacy
 nlp = spacy.load("en_core_web_sm")
 
 
-def display_metrics(true, pred):
-    f1 = round(f1_score(y_true=true, y_pred=pred, average="weighted") * 100, 2)
-
-    precision = round(
-        precision_score(y_true=true, y_pred=pred, average="weighted") * 100, 2)
-
-    recall = round(
-        recall_score(y_true=true, y_pred=pred, average="weighted") * 100, 2)
-
-    acc = round(accuracy_score(y_true=true, y_pred=pred) * 100, 2)
-
-    print(f"Accuracy: {acc} | "
-          f"F1: {f1} | "
-          f"Precision: {precision} | "
-          f"Recall: {recall}")
-
-    return acc, f1, precision, recall
-
-
 class CleanText(BaseEstimator, TransformerMixin):
     def __init__(self, feature_column_name, label_column_name):
         super(CleanText, self).__init__()
@@ -58,10 +39,11 @@ class CleanText(BaseEstimator, TransformerMixin):
     # noinspection PyMethodMayBeStatic
     def _clean_text(self, text: str):
         text = text.lower()
-        text = " ".join(text.split())  # remove \n \t
+        text = " ".join(text.split())
         text = re.sub("\s+", " ", text)
         text = re.sub(r"\w*\d\w*", "", text)
         text = re.sub(r"[%s]" % re.escape(string.punctuation), " ", text)
+        text = re.sub(r"-PRON-", "", text)
         text = re.sub(r"  +", " ", text)
         return text
 
@@ -102,9 +84,10 @@ class CleanText(BaseEstimator, TransformerMixin):
             self.feature_column_name].progress_apply(lambda x: str(x))
 
         dataframe[self.feature_column_name] = dataframe[
-            self.feature_column_name][dataframe[
-            self.feature_column_name].progress_apply(
-            lambda x: len(x.split()) > 2)]
+            self.feature_column_name][
+            dataframe[self.feature_column_name].progress_apply(
+                lambda x: len(x.split()) > 3)
+        ]
 
         dataframe.dropna(inplace=True)
 

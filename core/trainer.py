@@ -92,9 +92,9 @@ class Trainer:
 
     def score(self):
         assert self.best_estimator, "Models not fit yet"
-        predictions = self.best_estimator.predict(self.X_val)
+        predictions = self.best_estimator.predict(self.X_test)
         accuracy, f1, precision, recall = calculate_metrics(
-            y_true=self.y_val,
+            y_true=self.y_test,
             y_pred=predictions
         )
         return accuracy, f1, precision, recall

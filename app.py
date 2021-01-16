@@ -1,6 +1,6 @@
-from warnings import filterwarnings
+from warnings import simplefilter
 
-filterwarnings("ignore")
+simplefilter("ignore")
 
 from fastapi import FastAPI, File, UploadFile
 from pydantic import BaseModel
@@ -128,7 +128,7 @@ async def predict_asgn_group(short_desc: ShortDescription):
             model = joblib.load("models/train_pipeline.joblib")
             encoder = joblib.load("models/encoder.joblib")
             # TODO: Change filename to persistent storage path
-            print(model)
+
             prediction_label = encoder.inverse_transform(
                 model.predict([short_desc.description]))
             end = time.time()
@@ -140,7 +140,6 @@ async def predict_asgn_group(short_desc: ShortDescription):
             prediction_probablity = model.predict_proba(
                 [short_desc.description]
             )
-
             short_desc_dict.update({
                 "Prediction confidence": str(round(np.max(
                     prediction_probablity), 4) * 100)
@@ -184,7 +183,7 @@ async def batch_predictions(file: UploadFile = File(...)):
 
             output = list()
             for short_desc, true_grp, pred_grp in zip(
-                    X[:20], y[:20], pred_asgn_grps[:20]
+                    X[:10], y[:10], pred_asgn_grps[:10]
             ):
                 result = dict()
                 result["short_descriptions"] = short_desc
