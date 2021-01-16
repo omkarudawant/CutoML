@@ -84,6 +84,10 @@ class Trainer:
         joblib.dump(
             value=self.best_estimator, filename="models/train_pipeline.joblib",
             compress=5
+        )
+        joblib.dump(
+            value=self.encoder, filename="models/encoder.joblib",
+            compress=5
         )  # TODO: Change filename to persistent storage path
 
     def score(self):

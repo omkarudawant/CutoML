@@ -82,6 +82,7 @@ class CleanText(BaseEstimator, TransformerMixin):
 
         dataframe = dataframe.replace(
             {self.label_column_name: self.replacements})
+        dataframe = dataframe[~dataframe.index.duplicated()]
         dataframe.dropna(inplace=True)
 
         print("After: ", dataframe[self.label_column_name].unique())
