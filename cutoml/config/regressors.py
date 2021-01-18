@@ -11,7 +11,7 @@ from sklearn.model_selection import RandomizedSearchCV
 import multiprocessing
 import numpy as np
 
-cross_validation = 5
+cross_val = 10
 models = [
     LinearRegression(n_jobs=multiprocessing.cpu_count() // 2),
     RandomizedSearchCV(
@@ -171,9 +171,7 @@ models = [
         random_state=0
     ),
     RandomizedSearchCV(
-        estimator=SGDRegressor(
-            n_jobs=multiprocessing.cpu_count() // 2,
-            random_state=0),
+        estimator=SGDRegressor(random_state=0),
         param_distributions={
             'loss': ['squared_loss', 'huber', 'epsilon_insensitive'],
             'penalty': ['elasticnet'],
@@ -188,25 +186,5 @@ models = [
         verbose=2,
         n_jobs=multiprocessing.cpu_count() // 2,
         random_state=0
-    ),
-    RandomizedSearchCV(
-        estimator=SGDRegressor(
-            n_jobs=multiprocessing.cpu_count() // 2,
-            random_state=0),
-        param_distributions={
-            'loss': ['squared_loss', 'huber', 'epsilon_insensitive'],
-            'penalty': ['elasticnet'],
-            'alpha': [0.0, 0.01, 0.001],
-            'learning_rate': ['invscaling', 'constant'],
-            'fit_intercept': [True, False],
-            'l1_ratio': [0.25, 0.0, 1.0, 0.75, 0.5],
-            'eta0': [0.1, 1.0, 0.01],
-            'power_t': [0.5, 0.0, 1.0, 0.1, 100.0, 10.0, 50.0]
-        },
-        cv=cross_val,
-        verbose=2,
-        n_jobs=multiprocessing.cpu_count() // 2,
-        random_state=0
-    ),
-
+    )
 ]

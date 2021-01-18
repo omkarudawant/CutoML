@@ -14,7 +14,7 @@ from sklearn.model_selection import RandomizedSearchCV
 import multiprocessing
 import numpy as np
 
-cross_val = 5
+cross_val = 10
 models = [
     GaussianNB(),
     RandomizedSearchCV(
@@ -38,19 +38,6 @@ models = [
         verbose=2,
         n_jobs=multiprocessing.cpu_count() // 2,
         random_state=0
-    ),
-    RandomizedSearchCV(
-        DecisionTreeClassifier(random_state=0),
-        param_distributions={
-            'criterion': ["gini", "entropy"],
-            'max_depth': range(1, 11),
-            'min_samples_split': range(2, 21),
-            'min_samples_leaf': range(1, 21)
-        },
-        cv=cross_val,
-        random_state=0,
-        verbose=2,
-        n_jobs=multiprocessing.cpu_count() // 2
     ),
     RandomizedSearchCV(
         ExtraTreesClassifier(n_jobs=multiprocessing.cpu_count() // 2,
@@ -145,9 +132,7 @@ models = [
         n_jobs=multiprocessing.cpu_count() // 2
     ),
     RandomizedSearchCV(
-        GradientBoostingClassifier(
-            n_jobs=multiprocessing.cpu_count() // 2,
-            random_state=0),
+        GradientBoostingClassifier(random_state=0),
         param_distributions={
             'n_estimators': [100],
             'learning_rate': [1e-3, 1e-2, 1e-1, 0.5, 1.],
