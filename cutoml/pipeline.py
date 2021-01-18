@@ -1,5 +1,5 @@
 from sklearn.pipeline import Pipeline as Sklearn_pipeline
-from core import processors
+from cutoml import processors
 
 preprocess_pipeline = Sklearn_pipeline(
     [

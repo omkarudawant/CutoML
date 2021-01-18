@@ -6,9 +6,9 @@ from fastapi import FastAPI, File, UploadFile
 from pydantic import BaseModel
 from io import BytesIO
 
-from core.pipeline import preprocess_pipeline
-from core.trainer import Trainer
-from core.util import timer
+from cutoml.pipeline import preprocess_pipeline
+from cutoml.trainer import Trainer
+from cutoml.util import timer
 from sklearn.metrics import classification_report
 
 import time
