@@ -1,3 +1,3 @@
-# Custom-AutoML
+# CutoML
 
-A lightweight custom automl framework for text classification.
+A lightweight automl framework for text classification/regression.
