@@ -1,7 +1,5 @@
 """
-CutaML - A lightweight automl framework for classification and regression tasks.
-This file contains utility code for calculating various metrics scores for
-automl.
+CutoML - A lightweight automl framework for classification and regression tasks.
 
 Copyright (C) 2021  Omkar Udawant
 
@@ -30,6 +28,11 @@ from sklearn.metrics import mean_absolute_percentage_error
 from sklearn.metrics import r2_score
 from sklearn.preprocessing import LabelBinarizer
 import numpy as np
+import sys
+import warnings
+
+if not sys.warnoptions:
+    warnings.simplefilter("ignore")
 
 
 def multi_class_roc_auc_score(y_true: np.array, y_pred: np.array,
@@ -42,7 +45,7 @@ def multi_class_roc_auc_score(y_true: np.array, y_pred: np.array,
 
 
 def classification_metrics(y_true: np.array, y_pred: np.array):
-    average = 'weighted' if len(np.unique(y_true)) > 2 else 'binary'
+    average = 'weighted' if len(np.unique(y_true)) > 2 else None
     f1 = f1_score(y_true=y_true, y_pred=y_pred, average=average)
     precision = precision_score(y_true=y_true, y_pred=y_pred, average=average)
     recall = recall_score(y_true=y_true, y_pred=y_pred, average=average)

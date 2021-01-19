@@ -6,8 +6,8 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name='cutoml',
-    packages=setuptools.find_packages(),
-    version='0.0.2',
+    packages=['cutoml'],
+    version='0.0.4',
     license='gpl-3.0',
     description='A lightweight automl framework',
     long_description=long_description,
@@ -15,7 +15,7 @@ setup(
     author='Omkar Udawant',
     author_email='omkarudawant97@gmail.com',
     url='https://github.com/omkarudawant/CutoML',
-    download_url='https://github.com/omkarudawant/CutoML/archive/0.0.2.tar.gz',
+    download_url='https://github.com/omkarudawant/CutoML/archive/0.0.3.tar.gz',
     keywords=[
         'automl',
         'pipeline optimization',
@@ -24,13 +24,11 @@ setup(
         'machine learning',
     ],
     install_requires=[
-        'scipy',
-        'numpy',
-        'joblib',
-        'scikit-learn',
-        'pandas',
-        'pydantic',
-        'xgboost'
+        'scipy==1.6.0',
+        'numpy==1.19.5',
+        'scikit-learn==0.24.1',
+        'pydantic==1.6.1',
+        'xgboost==1.3.2'
     ],
     classifiers=[
         'Development Status :: 3 - Alpha',

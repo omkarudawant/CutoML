@@ -1,7 +1,7 @@
 """
-CutaML - A lightweight automl framework for classification and regression tasks.
+CutoML - A lightweight automl framework for classification and regression tasks.
 
-Copyright (C) 2021  Omkar Udawant
+Copyright (C) 2021 Omkar Udawant
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -16,25 +16,34 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
-from warnings import filterwarnings
 
-filterwarnings('ignore')
+import sys
+import warnings
 
-from cutoml.config import classifiers
-from cutoml.config import regressors
-from cutoml.utils import timer
-from cutoml.utils import classification_metrics, regression_metrics
+if not sys.warnoptions:
+    warnings.simplefilter("ignore")
+
+from cutoml.config.classifiers import Classifiers
+from cutoml.utils import classification_metrics
+from cutoml.config.regressors import Regressors
+from cutoml.utils import regression_metrics
+
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import MinMaxScaler
 from sklearn.pipeline import Pipeline
 import numpy as np
 import time
 import json
+import tqdm
 
 
 class CutoClassifier:
-    def __init__(self):
-        self.models = classifiers.models
+
+    def __init__(self, k_folds, n_jobs, verbose):
+        self.models = Classifiers(k_folds=k_folds, n_jobs=n_jobs,
+                                  verbose=verbose)
+        self.models = self.models.models
         self.best_estimator = None
 
     def fit(self, X, y):
@@ -47,30 +56,28 @@ class CutoClassifier:
         )
         trained_models = dict()
         start_time = time.time()
-        for model in self.models:
+        for model in tqdm.tqdm(desc='Training Classifiers',
+                               iterable=self.models,
+                               total=len(self.models)):
             try:
                 clf = Pipeline([
                     ('standard_scale', StandardScaler()),
                     ('classification_model', model)
                 ])
-                start = time.time()
                 clf.fit(X=X_train, y=y_train)
-                end = time.time()
-                timer(start=start, end=end)
                 pred = clf.predict(X_test)
 
                 acc, f1, prec, recall, roc_auc = classification_metrics(
                     y_true=y_test,
                     y_pred=pred
                 )
-
                 trained_models[f1] = clf
-            except Exception as e:
-                print(e)
-        end_time = time.time()
-        print(timer(start=start_time, end=end_time))
-        self.best_estimator = max(
-            sorted(trained_models.items(), reverse=True))[1]
+            except ValueError:
+                continue
+        if trained_models:
+            self.best_estimator = max(
+                sorted(trained_models.items(), reverse=True))[1]
+        return self
 
     def predict(self, X):
         prediction = self.best_estimator.predict(X)
@@ -87,7 +94,6 @@ class CutoClassifier:
             y_true=y,
             y_pred=pred
         )
-
         scores = {
             'Accuracy': accuracy,
             'F1 score': f1,
@@ -95,12 +101,15 @@ class CutoClassifier:
             'Recall': recall,
             'ROC_AUC_score': roc_auc_
         }
-        return json.dumps(scores, indent=4, sort_keys=True)
+        return json.dumps(scores, indent=2, sort_keys=True)
 
 
 class CutoRegressor:
-    def __init__(self):
-        self.models = regressors.models
+
+    def __init__(self, k_folds, n_jobs, verbose):
+        self.models = Regressors(k_folds=k_folds, n_jobs=n_jobs,
+                                 verbose=verbose)
+        self.models = self.models.models
         self.best_estimator = None
 
     def fit(self, X, y):
@@ -110,27 +119,24 @@ class CutoRegressor:
             random_state=0
         )
         trained_models = dict()
-        start_time = time.time()
-        for model in self.models:
-            clf = Pipeline([
+        for model in tqdm.tqdm(desc='Training Regressors',
+                               iterable=self.models,
+                               total=len(self.models)):
+            regr = Pipeline([
                 ('standard_scale', StandardScaler()),
                 ('regression_model', model)
             ])
-            start = time.time()
-            clf.fit(X=X_train, y=y_train)
-            end = time.time()
-            timer(start=start, end=end)
-
-            pred = clf.predict(X_test)
+            regr.fit(X=X_train, y=y_train)
+            pred = regr.predict(X_test)
             r2, mape, mse, mae = regression_metrics(
                 y_true=y_test,
                 y_pred=pred
             )
-            trained_models[r2] = clf
-        end_time = time.time()
-        timer(start=start_time, end=end_time)
-        self.best_estimator = max(
-            sorted(trained_models.items(), reverse=True))[1]
+            trained_models[r2] = regr
+        if trained_models:
+            self.best_estimator = max(
+                sorted(trained_models.items(), reverse=True))[1]
+        return self
 
     def predict(self, X):
         prediction = self.best_estimator.predict(X)
