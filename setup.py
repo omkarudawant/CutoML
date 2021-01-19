@@ -10,7 +10,7 @@ setup(
     author='Omkar Udawant',
     author_email='omkarudawant97@gmail.com',
     url='https://github.com/omkarudawant/CutoML',
-    download_url='https://github.com/user/reponame/archive/v_01.tar.gz',
+    download_url='https://github.com/omkarudawant/CutoML/archive/0.0.1.tar.gz',
     keywords=[
         'automl',
         'machine learning',
