@@ -1,7 +1,7 @@
 """
 CutoML - A lightweight automl framework for classification and regression tasks.
 
-Copyright (C) 2021  Omkar Udawant
+Copyright (C) 2021 Omkar Udawant
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -16,8 +16,4 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
-
-from cutoml.cutoml import CutoClassifier
-from cutoml.cutoml import CutoRegressor
-from cutoml.utils import timer
-from cutoml._version import __version__
+__version__ = '0.0.4'
