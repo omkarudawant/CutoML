@@ -1,10 +1,14 @@
-from sklearn.naive_bayes import MultinomialNB, GaussianNB, BernoulliNB
-from sklearn.linear_model import LogisticRegression, SGDClassifier
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.naive_bayes import GaussianNB
+from sklearn.naive_bayes import BernoulliNB
+from sklearn.linear_model import LogisticRegression
+from sklearn.linear_model import SGDClassifier
 from sklearn.svm import LinearSVC
 from sklearn.neighbors import KNeighborsClassifier
 
-from sklearn.ensemble import RandomForestClassifier, \
-    GradientBoostingClassifier, ExtraTreesClassifier
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import GradientBoostingClassifier
+from sklearn.ensemble import ExtraTreesClassifier
 from xgboost import XGBClassifier
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.neural_network import MLPClassifier
@@ -15,6 +19,7 @@ import multiprocessing
 import numpy as np
 
 cross_val = 10
+verbose = 2
 models = [
     GaussianNB(),
     RandomizedSearchCV(
@@ -24,7 +29,7 @@ models = [
             'fit_prior': [True, False]
         },
         cv=cross_val,
-        verbose=2,
+        verbose=verbose,
         n_jobs=multiprocessing.cpu_count() // 2,
         random_state=0
     ),
@@ -35,7 +40,7 @@ models = [
             'fit_prior': [True, False]
         },
         cv=cross_val,
-        verbose=2,
+        verbose=verbose,
         n_jobs=multiprocessing.cpu_count() // 2,
         random_state=0
     ),
@@ -43,7 +48,7 @@ models = [
         ExtraTreesClassifier(n_jobs=multiprocessing.cpu_count() // 2,
                              random_state=0),
         param_distributions={
-            'n_estimators': [100],
+            'n_estimators': np.arange(start=100, stop=500, step=100),
             'criterion': ["gini", "entropy"],
             'max_features': np.arange(0.05, 1.01, 0.05),
             'min_samples_split': range(2, 21),
@@ -52,7 +57,7 @@ models = [
         },
         cv=cross_val,
         random_state=0,
-        verbose=2,
+        verbose=verbose,
         n_jobs=multiprocessing.cpu_count() // 2
     ),
     RandomizedSearchCV(
@@ -64,7 +69,7 @@ models = [
         },
         cv=cross_val,
         random_state=0,
-        verbose=2,
+        verbose=verbose,
         n_jobs=multiprocessing.cpu_count() // 2
     ),
     RandomizedSearchCV(
@@ -74,11 +79,11 @@ models = [
             'penalty': ["l1", "l2"],
             'C': [1e-4, 1e-3, 1e-2, 1e-1, 0.5, 1., 5., 10., 15., 20., 25.],
             'dual': [True, False],
-            'max_iter': [100, 200]
+            'max_iter': np.arange(start=100, stop=500, step=100)
         },
         cv=cross_val,
         random_state=0,
-        verbose=2,
+        verbose=verbose,
         n_jobs=multiprocessing.cpu_count() // 2
     ),
     RandomizedSearchCV(
@@ -97,7 +102,7 @@ models = [
         },
         cv=cross_val,
         random_state=0,
-        verbose=2,
+        verbose=verbose,
         n_jobs=multiprocessing.cpu_count() // 2
     ),
     RandomizedSearchCV(
@@ -110,7 +115,7 @@ models = [
             'C': [1e-4, 1e-3, 1e-2, 1e-1, 0.5, 1., 5., 10., 15., 20., 25.]
         },
         random_state=0,
-        verbose=2,
+        verbose=verbose,
         cv=cross_val,
         n_jobs=multiprocessing.cpu_count() // 2
     ),
@@ -119,7 +124,7 @@ models = [
             n_jobs=multiprocessing.cpu_count() // 2,
             random_state=0),
         param_distributions={
-            'n_estimators': [100],
+            'n_estimators': np.arange(start=100, stop=500, step=100),
             'criterion': ["gini", "entropy"],
             'max_features': np.arange(0.05, 1.01, 0.05),
             'min_samples_split': range(2, 21),
@@ -128,13 +133,13 @@ models = [
         },
         cv=cross_val,
         random_state=0,
-        verbose=2,
+        verbose=verbose,
         n_jobs=multiprocessing.cpu_count() // 2
     ),
     RandomizedSearchCV(
         GradientBoostingClassifier(random_state=0),
         param_distributions={
-            'n_estimators': [100],
+            'n_estimators': np.arange(start=100, stop=500, step=100),
             'learning_rate': [1e-3, 1e-2, 1e-1, 0.5, 1.],
             'max_depth': range(1, 11),
             'min_samples_split': range(2, 21),
@@ -144,14 +149,14 @@ models = [
         },
         cv=cross_val,
         random_state=0,
-        verbose=2,
+        verbose=verbose,
         n_jobs=multiprocessing.cpu_count() // 2
     ),
     RandomizedSearchCV(
         XGBClassifier(n_jobs=multiprocessing.cpu_count() // 2,
                       random_state=0),
         param_distributions={
-            'n_estimators': [100],
+            'n_estimators': np.arange(start=100, stop=500, step=100),
             'max_depth': range(1, 11),
             'learning_rate': [1e-3, 1e-2, 1e-1, 0.5, 1.],
             'subsample': np.arange(0.05, 1.01, 0.05),
@@ -159,7 +164,7 @@ models = [
         },
         cv=cross_val,
         random_state=0,
-        verbose=2,
+        verbose=verbose,
         n_jobs=multiprocessing.cpu_count() // 2
     ),
     RandomizedSearchCV(
@@ -172,18 +177,19 @@ models = [
         },
         cv=cross_val,
         random_state=0,
-        verbose=2,
+        verbose=verbose,
         n_jobs=multiprocessing.cpu_count() // 2
     ),
     RandomizedSearchCV(
         MLPClassifier(random_state=0),
         param_distributions={
+            'max_iter': np.arange(start=100, stop=1000, step=100),
             'alpha': [1e-4, 1e-3, 1e-2, 1e-1],
             'learning_rate_init': [1e-3, 1e-2, 1e-1, 0.5, 1.]
         },
         cv=cross_val,
         random_state=0,
-        verbose=2,
+        verbose=verbose,
         n_jobs=multiprocessing.cpu_count() // 2
     )
 ]

@@ -1,3 +1,21 @@
+"""
+CutaML - A lightweight automl framework for classification and regression tasks.
+
+Copyright (C) 2021  Omkar Udawant
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
+"""
 from warnings import filterwarnings
 
 filterwarnings('ignore')
@@ -28,10 +46,9 @@ class CutoClassifier:
             random_state=0
         )
         trained_models = dict()
-        start = time.time()
+        start_time = time.time()
         for model in self.models:
             try:
-                print(model)
                 clf = Pipeline([
                     ('standard_scale', StandardScaler()),
                     ('classification_model', model)
@@ -40,22 +57,18 @@ class CutoClassifier:
                 clf.fit(X=X_train, y=y_train)
                 end = time.time()
                 timer(start=start, end=end)
-                print('Done ...')
                 pred = clf.predict(X_test)
-                print('Done ...')
-                try:
-                    accuracy, f1, precision, recall = classification_metrics(
-                        y_true=y_test,
-                        y_pred=pred
-                    )
-                except Exception as e:
-                    print(e)
+
+                acc, f1, prec, recall, roc_auc = classification_metrics(
+                    y_true=y_test,
+                    y_pred=pred
+                )
+
                 trained_models[f1] = clf
-                print('-' * 100)
             except Exception as e:
                 print(e)
-        end = time.time()
-        timer(start=start, end=end)
+        end_time = time.time()
+        print(timer(start=start_time, end=end_time))
         self.best_estimator = max(
             sorted(trained_models.items(), reverse=True))[1]
 
@@ -70,7 +83,7 @@ class CutoClassifier:
     def score(self, X, y):
         assert self.best_estimator, "Models not fitted yet"
         pred = self.best_estimator.predict(X)
-        accuracy, f1, precision, recall = classification_metrics(
+        accuracy, f1, precision, recall, roc_auc_ = classification_metrics(
             y_true=y,
             y_pred=pred
         )
@@ -79,9 +92,10 @@ class CutoClassifier:
             'Accuracy': accuracy,
             'F1 score': f1,
             'Precision': precision,
-            'Recall': recall
+            'Recall': recall,
+            'ROC_AUC_score': roc_auc_
         }
-        return json.dumps(scores, indent=2, sort_keys=True)
+        return json.dumps(scores, indent=4, sort_keys=True)
 
 
 class CutoRegressor:
@@ -113,7 +127,6 @@ class CutoRegressor:
                 y_pred=pred
             )
             trained_models[r2] = clf
-            print('-' * 100)
         end_time = time.time()
         timer(start=start_time, end=end_time)
         self.best_estimator = max(

@@ -1,7 +1,13 @@
-from sklearn.linear_model import LinearRegression, ElasticNet, Ridge, Lasso, \
-    LassoLars, SGDRegressor
-from sklearn.ensemble import ExtraTreesRegressor, GradientBoostingRegressor, \
-    RandomForestRegressor, AdaBoostRegressor
+from sklearn.linear_model import LinearRegression
+from sklearn.linear_model import ElasticNet
+from sklearn.linear_model import Ridge
+from sklearn.linear_model import Lasso
+from sklearn.linear_model import LassoLars
+from sklearn.linear_model import SGDRegressor
+from sklearn.ensemble import ExtraTreesRegressor
+from sklearn.ensemble import GradientBoostingRegressor
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.ensemble import AdaBoostRegressor
 from sklearn.svm import SVR, LinearSVR
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.neighbors import KNeighborsRegressor
@@ -12,6 +18,7 @@ import multiprocessing
 import numpy as np
 
 cross_val = 10
+verbose = 1
 models = [
     LinearRegression(n_jobs=multiprocessing.cpu_count() // 2),
     RandomizedSearchCV(
@@ -21,7 +28,7 @@ models = [
             'tol': [1e-5, 1e-4, 1e-3, 1e-2, 1e-1]
         },
         cv=cross_val,
-        verbose=2,
+        verbose=verbose,
         n_jobs=multiprocessing.cpu_count() // 2,
         random_state=0
     ),
@@ -35,7 +42,7 @@ models = [
             'bootstrap': [True, False]
         },
         cv=cross_val,
-        verbose=2,
+        verbose=verbose,
         n_jobs=multiprocessing.cpu_count() // 2,
         random_state=0
     ),
@@ -53,7 +60,7 @@ models = [
             'alpha': [0.75, 0.8, 0.85, 0.9, 0.95, 0.99]
         },
         cv=cross_val,
-        verbose=2,
+        verbose=verbose,
         n_jobs=multiprocessing.cpu_count() // 2,
         random_state=0
     ),
@@ -65,7 +72,7 @@ models = [
             'loss': ["linear", "square", "exponential"]
         },
         cv=cross_val,
-        verbose=2,
+        verbose=verbose,
         n_jobs=multiprocessing.cpu_count() // 2,
         random_state=0
     ),
@@ -77,7 +84,7 @@ models = [
             'min_samples_leaf': range(1, 21)
         },
         cv=cross_val,
-        verbose=2,
+        verbose=verbose,
         n_jobs=multiprocessing.cpu_count() // 2,
         random_state=0
     ),
@@ -89,7 +96,7 @@ models = [
             'p': [1, 2]
         },
         cv=cross_val,
-        verbose=2,
+        verbose=verbose,
         n_jobs=multiprocessing.cpu_count() // 2,
         random_state=0
     ),
@@ -99,7 +106,7 @@ models = [
             'alpha': [0.001, 0.01, 0.1, 1, 10, 100, 1000]
         },
         cv=cross_val,
-        verbose=2,
+        verbose=verbose,
         n_jobs=multiprocessing.cpu_count() // 2,
         random_state=0
     ),
@@ -109,7 +116,7 @@ models = [
             'alpha': [0.001, 0.01, 0.1, 1, 10, 100, 1000]
         },
         cv=cross_val,
-        verbose=2,
+        verbose=verbose,
         n_jobs=multiprocessing.cpu_count() // 2,
         random_state=0
     ),
@@ -119,7 +126,7 @@ models = [
             'alpha': [0.001, 0.01, 0.1, 1, 10, 100, 1000]
         },
         cv=cross_val,
-        verbose=2,
+        verbose=verbose,
         n_jobs=multiprocessing.cpu_count() // 2,
         random_state=0
     ),
@@ -133,7 +140,7 @@ models = [
             'epsilon': [1e-4, 1e-3, 1e-2, 1e-1, 1.]
         },
         cv=cross_val,
-        verbose=2,
+        verbose=verbose,
         n_jobs=multiprocessing.cpu_count() // 2,
         random_state=0
     ),
@@ -149,7 +156,7 @@ models = [
             'bootstrap': [True, False]
         },
         cv=cross_val,
-        verbose=2,
+        verbose=verbose,
         n_jobs=multiprocessing.cpu_count() // 2,
         random_state=0
     ),
@@ -166,7 +173,7 @@ models = [
             'objective': ['reg:squarederror']
         },
         cv=cross_val,
-        verbose=2,
+        verbose=verbose,
         n_jobs=multiprocessing.cpu_count() // 2,
         random_state=0
     ),
@@ -183,7 +190,7 @@ models = [
             'power_t': [0.5, 0.0, 1.0, 0.1, 100.0, 10.0, 50.0]
         },
         cv=cross_val,
-        verbose=2,
+        verbose=verbose,
         n_jobs=multiprocessing.cpu_count() // 2,
         random_state=0
     )
