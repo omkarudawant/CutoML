@@ -13,16 +13,16 @@ setup(
     download_url='https://github.com/omkarudawant/CutoML/archive/0.0.1.tar.gz',
     keywords=[
         'automl',
+        'pipeline optimization',
+        'hyperparameter optimization',
+        'data science',
         'machine learning',
-        'ml pipelines',
-        'automated '
-        'machine learning'
     ],
     install_requires=[
         'scipy',
         'numpy',
         'joblib',
-        'scikit-learn'
+        'scikit-learn',
         'pandas',
         'pydantic',
         'xgboost'
@@ -30,8 +30,10 @@ setup(
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Intended Audience :: Developers',
-        'Topic :: Software Development :: Build Tools',
-        'License :: OSI Approved :: GNU General Public License v3.0',
+        'Topic :: Scientific/Engineering :: Artificial Intelligence',
+        'License :: OSI Approved :: GNU Lesser General Public License v3 ('
+        'LGPLv3)',
+        'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
     ],
