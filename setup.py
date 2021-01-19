@@ -3,14 +3,13 @@ from distutils.core import setup
 setup(
     name='cutoml',
     packages=['cutoml'],
-    version='0.0.1',
+    version='0.0.2',
     license='gpl-3.0',
-    description='A lightweight automl framework for text '
-                'classification/regression.',
+    description='A lightweight automl framework for classification/regression tasks',
     author='Omkar Udawant',
     author_email='omkarudawant97@gmail.com',
     url='https://github.com/omkarudawant/CutoML',
-    download_url='https://github.com/omkarudawant/CutoML/archive/0.0.1.tar.gz',
+    download_url='https://github.com/omkarudawant/CutoML/archive/0.0.1b.tar.gz',
     keywords=[
         'automl',
         'pipeline optimization',
@@ -33,8 +32,6 @@ setup(
         'Topic :: Scientific/Engineering :: Artificial Intelligence',
         'License :: OSI Approved :: GNU Lesser General Public License v3 ('
         'LGPLv3)',
-        'Programming Language :: Python :: 3.5',
-        'Programming Language :: Python :: 3.6',
-        'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: >= 3.5',
     ],
 )
