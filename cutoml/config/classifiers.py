@@ -64,7 +64,7 @@ class Classifiers:
             RandomizedSearchCV(
                 estimator=MultinomialNB(),
                 param_distributions={
-                    'alpha': [1e-3, 1e-2, 1e-1, 1., 10., 100.],
+                    'alpha': [1e-3, 1e-2, 1e-1, 1., 10., ],
                     'fit_prior': [True, False]
                 },
                 cv=k_folds,
@@ -76,7 +76,7 @@ class Classifiers:
                 ExtraTreesClassifier(n_jobs=n_jobs,
                                      random_state=0),
                 param_distributions={
-                    'n_estimators': np.arange(start=100, stop=500, step=100),
+                    'n_estimators': np.arange(start=100, stop=300, step=100),
                     'criterion': ["gini", "entropy"],
                     'max_features': np.arange(0.05, 1.01, 0.05),
                     'min_samples_split': range(2, 21),
@@ -105,10 +105,9 @@ class Classifiers:
                                    random_state=0),
                 param_distributions={
                     'penalty': ["l1", "l2"],
-                    'C': [1e-4, 1e-3, 1e-2, 1e-1, 0.5, 1., 5., 10., 15., 20.,
-                          25.],
+                    'C': [1e-2, 1e-1, 0.5, 1., 5., 10., 15., 20., 25.],
                     'dual': [True, False],
-                    'max_iter': np.arange(start=100, stop=500, step=100)
+                    'max_iter': np.arange(start=100, stop=300, step=100)
                 },
                 cv=k_folds,
                 random_state=0,
@@ -154,7 +153,7 @@ class Classifiers:
                     n_jobs=n_jobs,
                     random_state=0),
                 param_distributions={
-                    'n_estimators': np.arange(start=100, stop=500, step=100),
+                    'n_estimators': np.arange(start=100, stop=300, step=100),
                     'criterion': ["gini", "entropy"],
                     'max_features': np.arange(0.05, 1.01, 0.05),
                     'min_samples_split': range(2, 21),
@@ -169,7 +168,7 @@ class Classifiers:
             RandomizedSearchCV(
                 GradientBoostingClassifier(random_state=0),
                 param_distributions={
-                    'n_estimators': np.arange(start=100, stop=500, step=100),
+                    'n_estimators': np.arange(start=100, stop=300, step=100),
                     'learning_rate': [1e-3, 1e-2, 1e-1, 0.5, 1.],
                     'max_depth': range(1, 11),
                     'min_samples_split': range(2, 21),
@@ -186,7 +185,7 @@ class Classifiers:
                 XGBClassifier(n_jobs=n_jobs,
                               random_state=0),
                 param_distributions={
-                    'n_estimators': np.arange(start=100, stop=500, step=100),
+                    'n_estimators': np.arange(start=100, stop=300, step=100),
                     'max_depth': range(1, 11),
                     'learning_rate': [1e-3, 1e-2, 1e-1, 0.5, 1.],
                     'subsample': np.arange(0.05, 1.01, 0.05),
@@ -213,7 +212,7 @@ class Classifiers:
             RandomizedSearchCV(
                 MLPClassifier(random_state=0),
                 param_distributions={
-                    'max_iter': np.arange(start=100, stop=1000, step=100),
+                    'max_iter': np.arange(start=100, stop=500, step=100),
                     'alpha': [1e-4, 1e-3, 1e-2, 1e-1],
                     'learning_rate_init': [1e-3, 1e-2, 1e-1, 0.5, 1.]
                 },

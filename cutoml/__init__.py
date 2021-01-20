@@ -17,7 +17,6 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-from cutoml.cutoml import CutoClassifier
-from cutoml.cutoml import CutoRegressor
-from cutoml.utils import timer
-from cutoml._version import __version__
+from .cutoml import CutoClassifier, CutoRegressor
+from .utils import timer
+from ._version import __version__

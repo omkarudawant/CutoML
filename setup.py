@@ -15,7 +15,7 @@ setup(
     author='Omkar Udawant',
     author_email='omkarudawant97@gmail.com',
     url='https://github.com/omkarudawant/CutoML',
-    download_url='https://github.com/omkarudawant/CutoML/archive/0.0.4.tar.gz',
+    download_url='https://github.com/omkarudawant/CutoML/archive/0.0.5.tar.gz',
     keywords=[
         'pipeline optimization',
         'hyperparameter optimization',
@@ -26,7 +26,7 @@ setup(
         'scipy>=1.5.1',
         'numpy>=1.19.1',
         'scikit-learn>=0.24.0',
-        'pydantic>=1.6.1',
+        'pydantic',
         'xgboost>=1.3.1'
     ],
     classifiers=[

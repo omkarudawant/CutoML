@@ -23,15 +23,16 @@ import warnings
 if not sys.warnoptions:
     warnings.simplefilter("ignore")
 
-from cutoml.config.classifiers import Classifiers
-from cutoml.utils import classification_metrics
-from cutoml.config.regressors import Regressors
-from cutoml.utils import regression_metrics
+from .config.classifiers import Classifiers
+from .utils import classification_metrics
+from .config.regressors import Regressors
+from .utils import regression_metrics
 
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.pipeline import Pipeline
+
 import numpy as np
 import time
 import json
@@ -39,37 +40,36 @@ import tqdm
 
 
 class CutoClassifier:
-
     def __init__(self, k_folds, n_jobs, verbose):
-        self.models = Classifiers(k_folds=k_folds, n_jobs=n_jobs,
-                                  verbose=verbose)
+        self.models = Classifiers(
+            k_folds=k_folds, n_jobs=n_jobs, verbose=verbose)
         self.models = self.models.models
         self.best_estimator = None
 
     def fit(self, X, y):
-        assert len(X) > len(np.unique(y)), "Features available for " \
-                                           "number of classes are not enough"
+        assert len(X) > len(np.unique(y)), (
+            "Features available for " "number of classes are not enough"
+        )
         X_train, X_test, y_train, y_test = train_test_split(
-            X, y,
-            test_size=0.1,
-            random_state=0
+            X, y, test_size=0.1, random_state=0
         )
         trained_models = dict()
         start_time = time.time()
-        for model in tqdm.tqdm(desc='Training Classifiers',
-                               iterable=self.models,
-                               total=len(self.models)):
+        for model in tqdm.tqdm(
+            desc="Training Classifiers", iterable=self.models, total=len(self.models)
+        ):
             try:
-                clf = Pipeline([
-                    ('standard_scale', StandardScaler()),
-                    ('classification_model', model)
-                ])
+                clf = Pipeline(
+                    [
+                        ("standard_scale", StandardScaler()),
+                        ("classification_model", model),
+                    ]
+                )
                 clf.fit(X=X_train, y=y_train)
                 pred = clf.predict(X_test)
 
                 acc, f1, prec, recall, roc_auc = classification_metrics(
-                    y_true=y_test,
-                    y_pred=pred
+                    y_true=y_test, y_pred=pred
                 )
                 trained_models[f1] = clf
             except ValueError:
@@ -91,47 +91,39 @@ class CutoClassifier:
         assert self.best_estimator, "Models not fitted yet"
         pred = self.best_estimator.predict(X)
         accuracy, f1, precision, recall, roc_auc_ = classification_metrics(
-            y_true=y,
-            y_pred=pred
+            y_true=y, y_pred=pred
         )
         scores = {
-            'Accuracy': accuracy,
-            'F1 score': f1,
-            'Precision': precision,
-            'Recall': recall,
-            'ROC_AUC_score': roc_auc_
+            "Accuracy": accuracy,
+            "F1 score": f1,
+            "Precision": precision,
+            "Recall": recall,
+            "ROC_AUC_score": roc_auc_,
         }
         return json.dumps(scores, indent=2, sort_keys=True)
 
 
 class CutoRegressor:
-
     def __init__(self, k_folds, n_jobs, verbose):
-        self.models = Regressors(k_folds=k_folds, n_jobs=n_jobs,
-                                 verbose=verbose)
+        self.models = Regressors(
+            k_folds=k_folds, n_jobs=n_jobs, verbose=verbose)
         self.models = self.models.models
         self.best_estimator = None
 
     def fit(self, X, y):
         X_train, X_test, y_train, y_test = train_test_split(
-            X, y,
-            test_size=0.1,
-            random_state=0
+            X, y, test_size=0.1, random_state=0
         )
         trained_models = dict()
-        for model in tqdm.tqdm(desc='Training Regressors',
-                               iterable=self.models,
-                               total=len(self.models)):
-            regr = Pipeline([
-                ('standard_scale', StandardScaler()),
-                ('regression_model', model)
-            ])
+        for model in tqdm.tqdm(
+            desc="Training Regressors", iterable=self.models, total=len(self.models)
+        ):
+            regr = Pipeline(
+                [("standard_scale", StandardScaler()), ("regression_model", model)]
+            )
             regr.fit(X=X_train, y=y_train)
             pred = regr.predict(X_test)
-            r2, mape, mse, mae = regression_metrics(
-                y_true=y_test,
-                y_pred=pred
-            )
+            r2, mape, mse, mae = regression_metrics(y_true=y_test, y_pred=pred)
             trained_models[r2] = regr
         if trained_models:
             self.best_estimator = max(
@@ -145,14 +137,6 @@ class CutoRegressor:
     def score(self, X, y):
         assert self.best_estimator, "Models not fitted yet"
         pred = self.best_estimator.predict(X)
-        r2, mape, mse, mae = regression_metrics(
-            y_true=y,
-            y_pred=pred
-        )
-        scores = {
-            'R2 score': r2,
-            'MAPE': mape,
-            'MSE': mse,
-            'MAE': mae
-        }
+        r2, mape, mse, mae = regression_metrics(y_true=y, y_pred=pred)
+        scores = {"R2 score": r2, "MAPE": mape, "MSE": mse, "MAE": mae}
         return json.dumps(scores, indent=2, sort_keys=True)
