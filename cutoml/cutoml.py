@@ -17,22 +17,17 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-import sys
-import warnings
-
-if not sys.warnoptions:
-    warnings.simplefilter("ignore")
-
-from .config.classifiers import Classifiers
-from .utils import classification_metrics
-from .config.regressors import Regressors
-from .utils import regression_metrics
+from cutoml.utils import regression_metrics
+from cutoml.utils import classification_metrics
+from cutoml.config import Classifiers
+from cutoml.config import Regressors
 
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.pipeline import Pipeline
 
+import multiprocessing
 import numpy as np
 import time
 import json
@@ -40,7 +35,7 @@ import tqdm
 
 
 class CutoClassifier:
-    def __init__(self, k_folds, n_jobs, verbose):
+    def __init__(self, k_folds=3, n_jobs=multiprocessing.cpu_count() // 2, verbose=0):
         self.models = Classifiers(
             k_folds=k_folds, n_jobs=n_jobs, verbose=verbose)
         self.models = self.models.models

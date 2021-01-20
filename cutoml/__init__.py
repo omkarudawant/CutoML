@@ -19,4 +19,5 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 from .cutoml import CutoClassifier, CutoRegressor
 from .utils import timer
+from .config import Classifiers, Regressors
 from ._version import __version__

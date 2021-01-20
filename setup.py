@@ -1,5 +1,4 @@
-from distutils.core import setup
-import setuptools
+from setuptools import setup
 
 with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
@@ -7,7 +6,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 setup(
     name='cutoml',
     packages=['cutoml'],
-    version='0.0.5',
+    version='0.0.6',
     license='gpl-3.0',
     description='A lightweight automl framework',
     long_description=long_description,
@@ -15,7 +14,7 @@ setup(
     author='Omkar Udawant',
     author_email='omkarudawant97@gmail.com',
     url='https://github.com/omkarudawant/CutoML',
-    download_url='https://github.com/omkarudawant/CutoML/archive/0.0.5.tar.gz',
+    download_url='https://github.com/omkarudawant/CutoML/archive/0.0.6.tar.gz',
     keywords=[
         'pipeline optimization',
         'hyperparameter optimization',
@@ -27,7 +26,8 @@ setup(
         'numpy>=1.19.1',
         'scikit-learn>=0.24.0',
         'pydantic',
-        'xgboost>=1.3.1'
+        'xgboost>=1.3.1',
+        'tqdm>=4.56.0'
     ],
     classifiers=[
         'Development Status :: 3 - Alpha',
