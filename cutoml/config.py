@@ -224,8 +224,11 @@ class Classifiers:
                 MLPClassifier(random_state=0),
                 param_distributions={
                     'max_iter': np.arange(start=100, stop=1001, step=100),
-                    'alpha': [1e-4, 1e-3, 1e-2, 1e-1],
-                    'learning_rate_init': [1e-3, 1e-2, 1e-1, 0.5, 1.]
+                    'hidden_layer_sizes': [(10, 30, 10), (50, 50, 50), (50, 100, 50), (20,), (100,)],
+                    'activation': ['tanh', 'relu'],
+                    'solver': ['sgd', 'adam'],
+                    'alpha': [0.0001, 0.05],
+                    'learning_rate': ['constant', 'adaptive'],
                 },
                 cv=k_folds,
                 random_state=0,

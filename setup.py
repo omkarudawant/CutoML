@@ -6,7 +6,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 setup(
     name='cutoml',
     packages=['cutoml'],
-    version='0.0.7',
+    version='0.0.8',
     license='gpl-3.0',
     description='A lightweight automl framework',
     long_description=long_description,

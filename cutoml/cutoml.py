@@ -55,10 +55,7 @@ class CutoClassifier:
         ):
             try:
                 clf = Pipeline(
-                    [
-                        ("standard_scale", StandardScaler()),
-                        ("classification_model", model),
-                    ]
+                    [("classification_model", model), ]
                 )
                 clf.fit(X=X_train, y=y_train)
                 pred = clf.predict(X_test)
@@ -105,7 +102,7 @@ class CutoClassifier:
             "Recall": recall,
             "ROC_AUC_score": roc_auc_,
         }
-        return json.dumps(scores, indent=2, sort_keys=True)
+        return json.dumps(scores, sort_keys=True)
 
 
 class CutoRegressor:
@@ -125,8 +122,7 @@ class CutoRegressor:
         ):
             try:
                 regr = Pipeline(
-                    [("standard_scale", StandardScaler()),
-                     ("regression_model", model)]
+                    [("regression_model", model)]
                 )
                 regr.fit(X=X_train, y=y_train)
                 pred = regr.predict(X_test)
@@ -138,7 +134,7 @@ class CutoRegressor:
         if trained_models:
             self.best_estimator = max(
                 sorted(trained_models.items(), reverse=True))[1]
-            return self.best_estimator
+            return self
         else:
             raise RuntimeError('Could not find best estimator.')
 
@@ -156,4 +152,4 @@ class CutoRegressor:
         pred = self.best_estimator.predict(X)
         r2, mape, mse, mae = regression_metrics(y_true=y, y_pred=pred)
         scores = {"R2 score": r2, "MAPE": mape, "MSE": mse, "MAE": mae}
-        return json.dumps(scores, indent=2, sort_keys=True)
+        return json.dumps(scores, sort_keys=True)
