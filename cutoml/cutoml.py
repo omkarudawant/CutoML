@@ -72,18 +72,28 @@ class CutoClassifier:
         if trained_models:
             self.best_estimator = max(
                 sorted(trained_models.items(), reverse=True))[1]
-        return self
+            return self
+        else:
+            raise RuntimeError('Could not find best estimator.')
 
     def predict(self, X):
+        if not self.best_estimator:
+            raise RuntimeError(
+                'Models not fit yet, please call object.fit() method first.')
         prediction = self.best_estimator.predict(X)
         return prediction
 
     def predict_proba(self, X):
+        if not self.best_estimator:
+            raise RuntimeError(
+                'Models not fit yet, please call object.fit() method first.')
         prediction_probablity = self.best_estimator.predict_proba(X)
         return prediction_probablity
 
     def score(self, X, y):
-        assert self.best_estimator, "Models not fitted yet"
+        if not self.best_estimator:
+            raise RuntimeError(
+                'Models not fit yet, please call object.fit() method first.')
         pred = self.best_estimator.predict(X)
         accuracy, f1, precision, recall, roc_auc_ = classification_metrics(
             y_true=y, y_pred=pred
@@ -113,24 +123,36 @@ class CutoRegressor:
         for model in tqdm.tqdm(
             desc="Training Regressors", iterable=self.models, total=len(self.models)
         ):
-            regr = Pipeline(
-                [("standard_scale", StandardScaler()), ("regression_model", model)]
-            )
-            regr.fit(X=X_train, y=y_train)
-            pred = regr.predict(X_test)
-            r2, mape, mse, mae = regression_metrics(y_true=y_test, y_pred=pred)
-            trained_models[r2] = regr
+            try:
+                regr = Pipeline(
+                    [("standard_scale", StandardScaler()),
+                     ("regression_model", model)]
+                )
+                regr.fit(X=X_train, y=y_train)
+                pred = regr.predict(X_test)
+                r2, mape, mse, mae = regression_metrics(
+                    y_true=y_test, y_pred=pred)
+                trained_models[r2] = regr
+            except Exception:
+                continue
         if trained_models:
             self.best_estimator = max(
                 sorted(trained_models.items(), reverse=True))[1]
-        return self
+            return self.best_estimator
+        else:
+            raise RuntimeError('Could not find best estimator.')
 
     def predict(self, X):
+        if not self.best_estimator:
+            raise RuntimeError(
+                'Models not fit yet, please call object.fit() method first.')
         prediction = self.best_estimator.predict(X)
         return prediction
 
     def score(self, X, y):
-        assert self.best_estimator, "Models not fitted yet"
+        if not self.best_estimator:
+            raise RuntimeError(
+                'Models not fit yet, please call object.fit() method first.')
         pred = self.best_estimator.predict(X)
         r2, mape, mse, mae = regression_metrics(y_true=y, y_pred=pred)
         scores = {"R2 score": r2, "MAPE": mape, "MSE": mse, "MAE": mae}
