@@ -8,7 +8,7 @@
 [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/omkarudawant/CutoML)
 
 
-A lightweight automl framework for classification/regression tasks.
+A lightweight automl framework.
 
 
 Installation
