@@ -2,6 +2,7 @@
 
 
 [![PyPI version](https://badge.fury.io/py/cutoml.svg)](https://pypi.org/project/cutoml/)
+[![PyPi downloads](https://pypip.in/d/cutoml/badge.png)](https://crate.io/packages/cutoml/)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://github.com/omkarudawant/CutoML/blob/main/LICENSE)
 [![Python 3.6](https://img.shields.io/badge/python-3.6+-blue.svg)](https://www.python.org/downloads/)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](https://github.com/omkarudawant/CutoML/pulls)
