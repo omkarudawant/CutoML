@@ -7,7 +7,6 @@
 [![Python 3.6](https://img.shields.io/badge/python-3.6+-blue.svg)](https://www.python.org/downloads/)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](https://github.com/omkarudawant/CutoML/pulls)
 [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/omkarudawant/CutoML)
-[![HitCount](http://hits.dwyl.com/{omkarudawant}/{CutoML}.svg)](http://hits.dwyl.com/{omkarudawant}/{CutoML})
 
 A lightweight automl framework.
 
