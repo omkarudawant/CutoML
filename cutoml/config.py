@@ -396,7 +396,8 @@ class Regressors:
                     'learning_rate': [1e-3, 1e-2, 1e-1, 0.5, 1.],
                     'subsample': np.arange(0.05, 1.01, 0.05),
                     'min_child_weight': range(1, 21),
-                    'objective': ['reg:squarederror']
+                    'objective': ['reg:squarederror'],
+                    'num_parallel_tree': [2],
                 },
                 cv=k_folds,
                 verbose=verbose,
