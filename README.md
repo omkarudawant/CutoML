@@ -8,13 +8,13 @@
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](https://github.com/omkarudawant/CutoML/pulls)
 [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/omkarudawant/CutoML)
 
-A lightweight automl framework.
+A lightweight automl library.
 
 
 Installation
 ------------
 
-    pip install cutoml
+    pip install -U cutoml
 
 Usage Example
 -------------
