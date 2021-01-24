@@ -34,6 +34,7 @@ import numpy as np
 import time
 import json
 import tqdm
+import warnings
 
 
 class CutoClassifier:
@@ -44,27 +45,33 @@ class CutoClassifier:
         self.best_estimator = None
         self.n_jobs = n_jobs
 
-    def _model_fitter(sef, model, X, y):
+    def _model_fitter(self, model, X, y):
+        clfs = list()
         try:
             clf = Pipeline([
                 ('classification_model', model)
             ])
-            clf = clf.fit(X, y)
+            with warnings.catch_warnings():
+                warnings.filterwarnings("ignore")
+                clf = clf.fit(X, y)
+                clfs.append(clf)
             return clf
+        except KeyboardInterrupt:
+            print('KeyboardInterrupted by User, Exiting...')
+            return clfs
         except Exception as e:
+            print('*' * 100)
             print(
                 f'Skipping {clf.named_steps["classification_model"]} because of {e}')
+            print('*' * 100)
 
     def fit(self, X, y):
-        assert len(X) > len(np.unique(y)), (
-            "Features available for " "number of classes are not enough"
-        )
         X_train, X_test, y_train, y_test = train_test_split(
             X, y, test_size=0.2, random_state=0
         )
 
         start_time = time.time()
-        pool = Pool(nodes=self.n_jobs)
+        pool = Pool()
         try:
             *trained_pipelines, = tqdm.tqdm(pool.map(lambda x: self._model_fitter(x,
                                                                                   X_train,
@@ -146,7 +153,9 @@ class CutoRegressor:
             rgr = Pipeline([
                 ('regression_model', model)
             ])
-            rgr = rgr.fit(X, y)
+            with warnings.catch_warnings():
+                warnings.filterwarnings("ignore")
+                rgr = rgr.fit(X, y)
             return rgr
         except Exception as e:
             print(
@@ -157,7 +166,7 @@ class CutoRegressor:
             X, y, test_size=0.2, random_state=0
         )
         start_time = time.time()
-        pool = Pool(nodes=self.n_jobs)
+        pool = Pool()
         try:
             *trained_pipelines, = tqdm.tqdm(pool.map(lambda x: self._model_fitter(x,
                                                                                   X_train,

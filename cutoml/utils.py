@@ -24,7 +24,6 @@ from sklearn.metrics import recall_score
 from sklearn.metrics import roc_auc_score
 from sklearn.metrics import mean_squared_error
 from sklearn.metrics import mean_absolute_error
-from sklearn.metrics import mean_absolute_percentage_error
 from sklearn.metrics import r2_score
 from sklearn.preprocessing import LabelBinarizer
 import numpy as np
@@ -42,6 +41,11 @@ def multi_class_roc_auc_score(y_true: np.array, y_pred: np.array,
     y_true = lb.transform(y_true)
     y_pred = lb.transform(y_pred)
     return roc_auc_score(y_true, y_pred, average=average)
+
+
+def mean_absolute_percentage_error(y_true, y_pred):
+    mask = y_true != 0
+    return (np.fabs(y_true - y_pred)/y_true)[mask].mean()
 
 
 def classification_metrics(y_true: np.array, y_pred: np.array):
