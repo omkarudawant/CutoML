@@ -14,7 +14,7 @@ setup(
     author='Omkar Udawant',
     author_email='omkarudawant97@gmail.com',
     url='https://github.com/omkarudawant/CutoML',
-    download_url='https://github.com/omkarudawant/CutoML/archive/0.0.8.tar.gz',
+    download_url='https://github.com/omkarudawant/CutoML/archive/0.0.9.tar.gz',
     keywords=[
         'pipeline optimization',
         'hyperparameter optimization',
