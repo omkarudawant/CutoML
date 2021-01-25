@@ -31,23 +31,15 @@ from sklearn.pipeline import Pipeline
 from pathos.multiprocessing import ProcessingPool as Pool
 from pathos import multiprocessing
 
-import signal
 import numpy as np
 import time
 import json
 import tqdm
 import warnings
-import sys
-
-
-def signal_handler(signal, frame):
-    print('^C by user, exiting..')
-    print(frame)
-    sys.exit(0)
 
 
 class CutoClassifier:
-    def __init__(self, k_folds=3, n_jobs=multiprocessing.cpu_count() // 2, verbose=0):
+    def __init__(self, k_folds=3, n_jobs=2, verbose=0):
         self.models = Classifiers(
             k_folds=k_folds, n_jobs=n_jobs, verbose=verbose)
         self.models = self.models.models
@@ -61,7 +53,7 @@ class CutoClassifier:
                 ('classification_model', model)
             ])
             with warnings.catch_warnings():
-                warnings.filterwarnings("ignore")
+                warnings.simplefilter("ignore")
                 clf = clf.fit(X, y)
                 clfs.append(clf)
             return clf
@@ -73,7 +65,6 @@ class CutoClassifier:
             X, y, test_size=0.2, random_state=0
         )
 
-        signal.signal(signal.SIGINT, signal_handler)
         start_time = time.time()
         pool = Pool()
         try:
@@ -85,7 +76,8 @@ class CutoClassifier:
             end_time = time.time()
         finally:
             pool.close()
-        print(timer(start=start_time, end=end_time))
+            pool.join()
+        # print(timer(start=start_time, end=end_time))
 
         trained_models = dict()
         for pipeline in trained_pipelines:
@@ -97,9 +89,7 @@ class CutoClassifier:
                     )
                     trained_models[f1] = pipeline
                 except Exception as e:
-                    print(
-                        f'\nSkipping {pipeline.named_steps["classification_model"].best_estimator_} because of {e}')
-
+                    pass
         if trained_models:
             self.best_estimator = max(
                 sorted(trained_models.items(), reverse=True))[1]
@@ -140,7 +130,7 @@ class CutoClassifier:
 
 
 class CutoRegressor:
-    def __init__(self, k_folds=3, n_jobs=multiprocessing.cpu_count() // 2, verbose=0):
+    def __init__(self, k_folds=3, n_jobs=2, verbose=0):
         self.models = Regressors(
             k_folds=k_folds, n_jobs=n_jobs, verbose=verbose)
         self.models = self.models.models
@@ -153,7 +143,7 @@ class CutoRegressor:
                 ('regression_model', model)
             ])
             with warnings.catch_warnings():
-                warnings.filterwarnings("ignore")
+                warnings.simplefilter("ignore")
                 rgr = rgr.fit(X, y)
             return rgr
         except Exception as e:
@@ -174,7 +164,8 @@ class CutoRegressor:
             end_time = time.time()
         finally:
             pool.close()
-        print(timer(start=start_time, end=end_time))
+            pool.join()
+        # print(timer(start=start_time, end=end_time))
 
         trained_models = dict()
         for pipeline in trained_pipelines:
@@ -185,8 +176,7 @@ class CutoRegressor:
                                                             y_pred=pred)
                     trained_models[r2] = pipeline
                 except Exception as e:
-                    print(
-                        f'\nSkipping {pipeline.named_steps["regression_model"].best_estimator_} because of {e}')
+                    pass
         if trained_models:
             self.best_estimator = max(
                 sorted(trained_models.items(), reverse=True))[1]

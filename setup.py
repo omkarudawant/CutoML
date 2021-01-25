@@ -6,7 +6,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 setup(
     name='cutoml',
     packages=['cutoml'],
-    version='0.0.8',
+    version='0.0.9',
     license='gpl-3.0',
     description='A lightweight automl framework',
     long_description=long_description,
@@ -25,7 +25,6 @@ setup(
         'scipy>=1.5.1',
         'numpy>=1.19.1',
         'scikit-learn>=0.24.0',
-        'pydantic',
         'xgboost<1.3.0',
         'tqdm>=4.56.0'
     ],
@@ -35,7 +34,10 @@ setup(
         'Topic :: Scientific/Engineering :: Artificial Intelligence',
         'License :: OSI Approved :: GNU Lesser General Public License v3 ('
         'LGPLv3)',
-        'Programming Language :: Python :: 3'
+        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
     ],
     python_requires='>=3.6',
 )
