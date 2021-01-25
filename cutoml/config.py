@@ -58,7 +58,7 @@ import numpy as np
 class Classifiers:
     def __init__(self,
                  k_folds=5,
-                 n_jobs=multiprocessing.cpu_count() // 2,
+                 n_jobs=2,
                  verbose=1):
         self.models = [
             GaussianNB(),
@@ -88,7 +88,7 @@ class Classifiers:
                 ExtraTreesClassifier(n_jobs=n_jobs,
                                      random_state=0),
                 param_distributions={
-                    'n_estimators': [100, 300, 500, 800, 1200],
+                    'n_estimators': [100, 500, 1500, 2000],
                     'max_depth': [5, 8, 15, 25, None],
                     'max_features': ['log2', 'sqrt', 'auto', None],
                     'min_samples_split': [2, 5, 10, 15, 100],
@@ -161,6 +161,7 @@ class Classifiers:
                 param_distributions={
                     'penalty': ["l2"],
                     'dual': [True],
+                    'max_iter': [100, 500, 1500, 2000, 2500, 3000, 3500],
                     'tol': [1e-5, 1e-4, 1e-3, 1e-2, 1e-1],
                     'C': np.logspace(0, 3, 4),
                 },
@@ -173,6 +174,7 @@ class Classifiers:
                 LinearSVC(random_state=0),
                 param_distributions={
                     'penalty': ["l1", "l2"],
+                    'max_iter': [100, 500, 1500, 2000, 2500, 3000, 3500],
                     'dual': [False],
                     'tol': [1e-5, 1e-4, 1e-3, 1e-2, 1e-1],
                     'C': np.logspace(0, 3, 4)
@@ -187,7 +189,7 @@ class Classifiers:
                     n_jobs=n_jobs,
                     random_state=0),
                 param_distributions={
-                    'n_estimators': [100, 300, 500, 800, 1200],
+                    'n_estimators': [100, 500, 1500, 2000],
                     'max_features': ['log2', 'sqrt', 'auto', None],
                     'min_samples_split': [2, 5, 10, 15, 100],
                     'min_samples_leaf': [1, 2, 5, 10],
@@ -200,7 +202,7 @@ class Classifiers:
             HalvingRandomSearchCV(
                 GradientBoostingClassifier(random_state=0),
                 param_distributions={
-                    'n_estimators': [100, 300, 500, 800, 1200],
+                    'n_estimators': [100, 500, 1500, 2000],
                     'learning_rate': [1e-3, 1e-2, 1e-1, 0.5, 1.],
                 },
                 cv=k_folds,
@@ -212,11 +214,11 @@ class Classifiers:
                 XGBClassifier(n_jobs=n_jobs,
                               random_state=0),
                 param_distributions={
-                    'n_estimators': [100, 300, 500, 800, 1200],
+                    'n_estimators': [100, 500, 1500, 2000],
                     'learning_rate': [1e-4, 1e-3, 1e-2, 1e-1, 0.5, 1.],
                     'min_child_weight': range(1, 21),
-                    'use_label_encoder':[False],
-                    'subsample': np.arange(0.05, 1.01, 0.05),
+                    # 'use_label_encoder':[False],
+                    'subsample': np.arange(0.05, 1.0, 0.05),
                     'min_child_weight': range(1, 21),
                 },
                 cv=k_folds,
@@ -240,7 +242,7 @@ class Classifiers:
             HalvingRandomSearchCV(
                 MLPClassifier(random_state=0),
                 param_distributions={
-                    'max_iter': [100, 300, 500, 800, 1200, 1500],
+                    'max_iter': [100, 500, 1500, 2000, 2500, 3000, 3500],
                     'hidden_layer_sizes': [
                         (10, 30, 10),
                         (50, 50, 50),
@@ -282,7 +284,7 @@ class Regressors:
             HalvingRandomSearchCV(
                 estimator=ExtraTreesRegressor(random_state=0),
                 param_distributions={
-                    'n_estimators': [100, 300, 500, 800, 1200],
+                    'n_estimators': [100, 500, 1500, 2000],
                     'max_depth': [5, 8, 15, 25, None],
                     'max_features': ['log2', 'sqrt', 'auto', None],
                     'min_samples_split': [2, 5, 10, 15, 100],
@@ -296,7 +298,7 @@ class Regressors:
             HalvingRandomSearchCV(
                 estimator=GradientBoostingRegressor(random_state=0),
                 param_distributions={
-                    'n_estimators': [100, 300, 500, 800, 1200],
+                    'n_estimators': [100, 500, 1500, 2000],
                     'loss': ["ls", "lad", "huber", "quantile"],
                     'learning_rate': [1e-3, 1e-2, 1e-1, 0.5, 1.],
                     'max_depth': [5, 8, 15, 25, None],
@@ -313,7 +315,7 @@ class Regressors:
             HalvingRandomSearchCV(
                 estimator=AdaBoostRegressor(random_state=0),
                 param_distributions={
-                    'n_estimators': [100, 300, 500, 800, 1200],
+                    'n_estimators': [100, 500, 1500, 2000],
                     'learning_rate': [1e-3, 1e-2, 1e-1, 0.5, 1.],
                     'loss': ["linear", "square", "exponential"]
                 },
@@ -395,7 +397,7 @@ class Regressors:
                     n_jobs=n_jobs,
                     random_state=0),
                 param_distributions={
-                    'n_estimators': [100, 300, 500, 800, 1200],
+                    'n_estimators': [100, 500, 1500, 2000],
                     'max_features': ['log2', 'sqrt', 'auto', None],
                     'min_samples_split': [2, 5, 10, 15, 100],
                     'min_samples_leaf': [1, 2, 5, 10],
@@ -410,10 +412,10 @@ class Regressors:
                     n_jobs=n_jobs,
                     random_state=0),
                 param_distributions={
-                    'n_estimators': [100, 300, 500, 800, 1200],
+                    'n_estimators': [100, 500, 1500, 2000],
                     'learning_rate': [1e-4, 1e-3, 1e-2, 1e-1, 0.5, 1.],
                     'min_child_weight': range(1, 21),
-                    'use_label_encoder':[False],
+                    # 'use_label_encoder':[False],
                     'subsample': np.arange(0.05, 1.01, 0.05),
                     'min_child_weight': range(1, 21),
                 },

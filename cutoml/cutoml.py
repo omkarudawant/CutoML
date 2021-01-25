@@ -29,12 +29,21 @@ from sklearn.preprocessing import MinMaxScaler
 from sklearn.pipeline import Pipeline
 
 from pathos.multiprocessing import ProcessingPool as Pool
-import multiprocessing
+from pathos import multiprocessing
+
+import signal
 import numpy as np
 import time
 import json
 import tqdm
 import warnings
+import sys
+
+
+def signal_handler(signal, frame):
+    print('^C by user, exiting..')
+    print(frame)
+    sys.exit(0)
 
 
 class CutoClassifier:
@@ -56,32 +65,22 @@ class CutoClassifier:
                 clf = clf.fit(X, y)
                 clfs.append(clf)
             return clf
-        except KeyboardInterrupt:
-            print('KeyboardInterrupted by User, Exiting...')
-            return clfs
         except Exception as e:
-            print('*' * 100)
-            print(
-                f'Skipping {clf.named_steps["classification_model"]} because of {e}')
-            print('*' * 100)
+            pass
 
     def fit(self, X, y):
         X_train, X_test, y_train, y_test = train_test_split(
             X, y, test_size=0.2, random_state=0
         )
 
+        signal.signal(signal.SIGINT, signal_handler)
         start_time = time.time()
         pool = Pool()
         try:
             *trained_pipelines, = tqdm.tqdm(pool.map(lambda x: self._model_fitter(x,
                                                                                   X_train,
                                                                                   y_train),
-                                                     tqdm.tqdm(desc="Optimizing Classifiers",
-                                                               iterable=self.models,
-                                                               total=len(
-                                                                   self.models),
-                                                               )
-                                                     )
+                                                     self.models)
                                             )
             end_time = time.time()
         finally:
@@ -158,8 +157,7 @@ class CutoRegressor:
                 rgr = rgr.fit(X, y)
             return rgr
         except Exception as e:
-            print(
-                f'Skipping {rgr.named_steps["regression_model"]} because of {e}')
+            pass
 
     def fit(self, X, y):
         X_train, X_test, y_train, y_test = train_test_split(
@@ -171,12 +169,7 @@ class CutoRegressor:
             *trained_pipelines, = tqdm.tqdm(pool.map(lambda x: self._model_fitter(x,
                                                                                   X_train,
                                                                                   y_train),
-                                                     tqdm.tqdm(desc="Optimizing Regressors",
-                                                               iterable=self.models,
-                                                               total=len(
-                                                                   self.models),
-                                                               )
-                                                     )
+                                                     self.models)
                                             )
             end_time = time.time()
         finally:

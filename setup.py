@@ -26,7 +26,7 @@ setup(
         'numpy>=1.19.1',
         'scikit-learn>=0.24.0',
         'pydantic',
-        'xgboost>=1.3.1',
+        'xgboost<1.3.0',
         'tqdm>=4.56.0'
     ],
     classifiers=[
