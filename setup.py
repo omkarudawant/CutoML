@@ -8,7 +8,7 @@ setup(
     packages=['cutoml'],
     version='0.0.9.post1',
     license='gpl-3.0',
-    description='A lightweight automl framework',
+    description='A lightweight automl library.',
     long_description=long_description,
     long_description_content_type="text/markdown",
     author='Omkar Udawant',
