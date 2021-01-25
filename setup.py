@@ -17,7 +17,7 @@ setup(
     download_url='https://github.com/omkarudawant/CutoML/archive/0.0.9.tar.gz',
     keywords=[
         'pipeline optimization',
-        'hyperparameter optimization',
+        'automated hyperparameter optimization',
         'data science',
         'machine learning',
     ],
@@ -26,7 +26,8 @@ setup(
         'numpy>=1.19.1',
         'scikit-learn>=0.24.0',
         'xgboost<1.3.0',
-        'tqdm>=4.56.0'
+        'tqdm>=4.56.0',
+        'pathos>=0.2.7',
     ],
     classifiers=[
         'Development Status :: 3 - Alpha',
