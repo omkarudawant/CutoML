@@ -27,10 +27,11 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.pipeline import Pipeline
-
+from imblearn.pipeline import Pipeline as imblearn_pipeline
+from imblearn.over_sampling import SMOTE
 from pathos.multiprocessing import ProcessingPool as Pool
 from pathos import multiprocessing
-
+from collections import Counter
 import numpy as np
 import time
 import json
@@ -39,23 +40,22 @@ import warnings
 
 
 class CutoClassifier:
-    def __init__(self, k_folds=3, n_jobs=2, verbose=0):
+    def __init__(self, k_folds=3, oversample=False, n_jobs=2, verbose=0):
         self.models = Classifiers(
             k_folds=k_folds, n_jobs=n_jobs, verbose=verbose)
         self.models = self.models.models
+        self.oversample = oversample
         self.best_estimator = None
         self.n_jobs = n_jobs
 
     def _model_fitter(self, model, X, y):
-        clfs = list()
         try:
             clf = Pipeline([
                 ('classification_model', model)
             ])
             with warnings.catch_warnings():
-                warnings.simplefilter("ignore")
+                warnings.filterwarnings("ignore")
                 clf = clf.fit(X, y)
-                clfs.append(clf)
             return clf
         except Exception as e:
             pass
@@ -65,29 +65,37 @@ class CutoClassifier:
             X, y, test_size=0.2, random_state=0
         )
 
+        if self.oversample:
+            over_sampler = SMOTE(
+                random_state=0,
+                k_neighbors=3,
+                n_jobs=self.n_jobs
+            )
+            X_train, y_train = over_sampler.fit_resample(X_train, y_train)
+
         start_time = time.time()
         pool = Pool()
         try:
-            *trained_pipelines, = tqdm.tqdm(pool.map(lambda x: self._model_fitter(x,
-                                                                                  X_train,
-                                                                                  y_train),
-                                                     self.models)
-                                            )
+            *trained_pipelines, = tqdm.tqdm(pool.imap(lambda x: self._model_fitter(x,
+                                                                                   X_train,
+                                                                                   y_train),
+                                                      self.models),
+                                            total=len(self.models),
+                                            desc='Optimization in progress')
             end_time = time.time()
+        except KeyboardInterrupt:
+            pool.terminate()
+            pool.join()
         finally:
             pool.close()
             pool.join()
-        # print(timer(start=start_time, end=end_time))
-
+        print(timer(start=start_time, end=end_time))
         trained_models = dict()
         for pipeline in trained_pipelines:
             if pipeline:
                 try:
-                    pred = pipeline.predict(X_test)
-                    acc, f1, prec, recall, roc_auc = classification_metrics(
-                        y_true=y_test, y_pred=pred
-                    )
-                    trained_models[f1] = pipeline
+                    score = pipeline.score(X_test, y_test)
+                    trained_models[score] = pipeline
                 except Exception as e:
                     pass
         if trained_models:
@@ -100,33 +108,23 @@ class CutoClassifier:
     def predict(self, X):
         if not self.best_estimator:
             raise RuntimeError(
-                'Models not fit yet, please call object.fit() method first.')
+                'Models not fit yet, please call fit() method first.')
         prediction = self.best_estimator.predict(X)
         return prediction
 
     def predict_proba(self, X):
         if not self.best_estimator:
             raise RuntimeError(
-                'Models not fit yet, please call object.fit() method first.')
+                'Models not fit yet, please call fit() method first.')
         prediction_probablity = self.best_estimator.predict_proba(X)
         return prediction_probablity
 
     def score(self, X, y):
         if not self.best_estimator:
             raise RuntimeError(
-                'Models not fit yet, please call object.fit() method first.')
-        pred = self.best_estimator.predict(X)
-        accuracy, f1, precision, recall, roc_auc_ = classification_metrics(
-            y_true=y, y_pred=pred
-        )
-        scores = {
-            "Accuracy": accuracy,
-            "F1 score": f1,
-            "Precision": precision,
-            "Recall": recall,
-            "ROC_AUC_score": roc_auc_,
-        }
-        return json.dumps(scores, sort_keys=True)
+                'Models not fit yet, please call fit() method first.')
+        score = self.best_estimator.score(X, y)
+        return score
 
 
 class CutoRegressor:
@@ -156,12 +154,17 @@ class CutoRegressor:
         start_time = time.time()
         pool = Pool()
         try:
-            *trained_pipelines, = tqdm.tqdm(pool.map(lambda x: self._model_fitter(x,
-                                                                                  X_train,
-                                                                                  y_train),
-                                                     self.models)
+            *trained_pipelines, = tqdm.tqdm(pool.imap(lambda x: self._model_fitter(x,
+                                                                                   X_train,
+                                                                                   y_train),
+                                                      self.models),
+                                            total=len(self.models),
+                                            desc='Optimization in progress'
                                             )
             end_time = time.time()
+        except KeyboardInterrupt:
+            pool.terminate()
+            pool.join()
         finally:
             pool.close()
             pool.join()
@@ -171,10 +174,8 @@ class CutoRegressor:
         for pipeline in trained_pipelines:
             if pipeline:
                 try:
-                    pred = pipeline.predict(X_test)
-                    r2, mape, mse, mae = regression_metrics(y_true=y_test,
-                                                            y_pred=pred)
-                    trained_models[r2] = pipeline
+                    score = pipeline.score(X_test, y_test)
+                    trained_models[score] = pipeline
                 except Exception as e:
                     pass
         if trained_models:
@@ -187,15 +188,13 @@ class CutoRegressor:
     def predict(self, X):
         if not self.best_estimator:
             raise RuntimeError(
-                'Models not fit yet, please call object.fit() method first.')
+                'Models not fit yet, please call fit() method first.')
         prediction = self.best_estimator.predict(X)
         return prediction
 
     def score(self, X, y):
         if not self.best_estimator:
             raise RuntimeError(
-                'Models not fit yet, please call object.fit() method first.')
-        pred = self.best_estimator.predict(X)
-        r2, mape, mse, mae = regression_metrics(y_true=y, y_pred=pred)
-        scores = {"R2 score": r2, "MAPE": mape, "MSE": mse, "MAE": mae}
-        return json.dumps(scores, sort_keys=True)
+                'Models not fit yet, please call fit() method first.')
+        score = self.best_estimator.score(X, y)
+        return score

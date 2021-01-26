@@ -6,15 +6,15 @@ with open("README.md", "r", encoding="utf-8") as fh:
 setup(
     name='cutoml',
     packages=['cutoml'],
-    version='0.0.9.post1',
+    version='0.0.9.post12',
     license='gpl-3.0',
-    description='A lightweight automl library.',
+    description='A lightweight automl library',
     long_description=long_description,
     long_description_content_type="text/markdown",
     author='Omkar Udawant',
     author_email='omkarudawant97@gmail.com',
     url='https://github.com/omkarudawant/CutoML',
-    download_url='https://github.com/omkarudawant/CutoML/archive/0.0.9.post1.tar.gz',
+    download_url='https://github.com/omkarudawant/CutoML/archive/0.0.9.post1.1.tar.gz',
     keywords=[
         'pipeline optimization',
         'automated hyperparameter optimization',

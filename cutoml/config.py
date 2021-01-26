@@ -58,7 +58,17 @@ class Classifiers:
                  n_jobs=2,
                  verbose=1):
         self.models = [
-            GaussianNB(),
+            HalvingRandomSearchCV(
+                estimator=GaussianNB(),
+                param_distributions={
+                    'var_smoothing': np.logspace(0, -9, 10)
+                },
+                cv=k_folds,
+                verbose=verbose,
+                n_jobs=n_jobs,
+                scoring='f1_weighted',
+                random_state=0
+            ),
             HalvingRandomSearchCV(
                 estimator=BernoulliNB(),
                 param_distributions={
@@ -68,43 +78,49 @@ class Classifiers:
                 cv=k_folds,
                 verbose=verbose,
                 n_jobs=n_jobs,
+                scoring='f1_weighted',
                 random_state=0
             ),
             HalvingRandomSearchCV(
                 estimator=MultinomialNB(),
                 param_distributions={
-                    'alpha': [1e-3, 1e-2, 1e-1, 1., 10., ],
+                    'alpha': [1e-3, 1e-2, 1e-1, 1., 10., 20.],
                     'fit_prior': [True, False]
                 },
                 cv=k_folds,
                 verbose=verbose,
                 n_jobs=n_jobs,
+                scoring='f1_weighted',
                 random_state=0
             ),
             HalvingRandomSearchCV(
                 ExtraTreesClassifier(n_jobs=n_jobs,
                                      random_state=0),
                 param_distributions={
-                    'n_estimators': [100, 300],
-                    'max_depth': [8, 15, None],
-                    'max_features': ['log2', 'sqrt'],
+                    'n_estimators': [100],
+                    'criterion': ["gini", "entropy"],
+                    'max_features': np.arange(0.05, 1.00, 0.05),
                     'min_samples_split': [2, 5, 10, 15, 20],
                     'min_samples_leaf': [1, 2, 5, 10],
+                    'bootstrap': [True, False]
                 },
                 cv=k_folds,
                 random_state=0,
                 verbose=verbose,
+                scoring='f1_weighted',
                 n_jobs=n_jobs
             ),
             HalvingRandomSearchCV(
                 KNeighborsClassifier(n_jobs=n_jobs),
                 param_distributions={
-                    'n_neighbors': [2, 4, 8, 10],
+                    'n_neighbors': [2, 4, 8, 10, 12],
+                    'weights': ["uniform", "distance"],
                     'p': [1, 2]
                 },
                 cv=k_folds,
                 random_state=0,
                 verbose=verbose,
+                scoring='f1_weighted',
                 n_jobs=n_jobs
             ),
             HalvingRandomSearchCV(
@@ -113,25 +129,12 @@ class Classifiers:
                 param_distributions={
                     'penalty': ["l1", "l2"],
                     'C': np.logspace(0, 3, 4),
-                    'max_iter': np.arange(start=100, stop=1001, step=500)
+                    'max_iter': [100, 500]
                 },
                 cv=k_folds,
                 random_state=0,
                 verbose=verbose,
-                n_jobs=n_jobs
-            ),
-            HalvingRandomSearchCV(
-                LogisticRegression(n_jobs=n_jobs,
-                                   random_state=0),
-                param_distributions={
-                    'penalty': ["l2"],
-                    'solver': ['newton-cg', 'saga', 'sag'],
-                    'C': np.logspace(0, 3, 4),
-                    'max_iter': np.arange(start=100, stop=1001, step=500)
-                },
-                cv=k_folds,
-                random_state=0,
-                verbose=verbose,
+                scoring='f1_weighted',
                 n_jobs=n_jobs
             ),
             HalvingRandomSearchCV(
@@ -143,13 +146,11 @@ class Classifiers:
                     'penalty': ['elasticnet'],
                     'alpha': [0.0, 0.01, 0.001],
                     'learning_rate': ['invscaling', 'constant'],
-                    'l1_ratio': [0.25, 0.0, 1.0, 0.75, 0.5],
-                    'eta0': [0.1, 1.0, 0.01],
-                    'power_t': [0.5, 0.0, 1.0, 0.1, 10.0, 50.0]
                 },
                 cv=k_folds,
                 random_state=0,
                 verbose=verbose,
+                scoring='f1_weighted',
                 n_jobs=n_jobs
             ),
             HalvingRandomSearchCV(
@@ -157,12 +158,13 @@ class Classifiers:
                 param_distributions={
                     'penalty': ["l2"],
                     'dual': [True],
-                    'max_iter': np.arange(start=100, stop=1001, step=500),
+                    'max_iter': [100, 500],
                     'tol': [1e-3, 1e-2, 1e-1],
                     'C': np.logspace(0, 3, 4),
                 },
                 random_state=0,
                 verbose=verbose,
+                scoring='f1_weighted',
                 cv=k_folds,
                 n_jobs=n_jobs
             ),
@@ -170,13 +172,14 @@ class Classifiers:
                 LinearSVC(random_state=0),
                 param_distributions={
                     'penalty': ["l1", "l2"],
-                    'max_iter': np.arange(start=100, stop=1001, step=500),
+                    'max_iter': [100, 500],
                     'dual': [False],
                     'tol': [1e-3, 1e-2, 1e-1],
                     'C': np.logspace(0, 3, 4)
                 },
                 random_state=0,
                 verbose=verbose,
+                scoring='f1_weighted',
                 cv=k_folds,
                 n_jobs=n_jobs
             ),
@@ -185,7 +188,7 @@ class Classifiers:
                     n_jobs=n_jobs,
                     random_state=0),
                 param_distributions={
-                    'n_estimators': [100, 300],
+                    'n_estimators': [100],
                     'max_features': ['log2', 'sqrt'],
                     'min_samples_split': [2, 5, 10, 15, 20],
                     'min_samples_leaf': [1, 2, 5, 10],
@@ -193,32 +196,34 @@ class Classifiers:
                 cv=k_folds,
                 random_state=0,
                 verbose=verbose,
+                scoring='f1_weighted',
                 n_jobs=n_jobs
             ),
             HalvingRandomSearchCV(
                 GradientBoostingClassifier(random_state=0),
                 param_distributions={
-                    'n_estimators': [100, 300],
-                    'learning_rate': [1e-3, 1e-2, 1e-1, 0.5, 1.],
+                    'n_estimators': [100],
+                    'learning_rate': [1e-3, 1e-2, 1e-1, 1.],
                 },
                 cv=k_folds,
                 random_state=0,
                 verbose=verbose,
+                scoring='f1_weighted',
                 n_jobs=n_jobs
             ),
             HalvingRandomSearchCV(
                 XGBClassifier(n_jobs=n_jobs,
                               random_state=0),
                 param_distributions={
-                    'n_estimators': [100, 300],
-                    'learning_rate': [1e-3, 1e-2, 1e-1, 0.5, 1.],
+                    'n_estimators': [100],
+                    'learning_rate': [1e-3, 1e-2, 1e-1, 1.],
                     'min_child_weight': range(1, 21),
                     'subsample': np.arange(0.05, 1.0, 0.05),
-                    'min_child_weight': range(1, 21),
                 },
                 cv=k_folds,
                 random_state=0,
                 verbose=verbose,
+                scoring='f1_weighted',
                 n_jobs=n_jobs
             ),
             HalvingRandomSearchCV(
@@ -232,12 +237,13 @@ class Classifiers:
                 cv=k_folds,
                 random_state=0,
                 verbose=verbose,
+                scoring='f1_weighted',
                 n_jobs=n_jobs
             ),
             HalvingRandomSearchCV(
                 MLPClassifier(random_state=0),
                 param_distributions={
-                    'max_iter': np.arange(start=100, stop=1001, step=500),
+                    'max_iter': [100, 500],
                     'hidden_layer_sizes': [
                         (10, 30, 10),
                         (50, 50, 50),
@@ -254,6 +260,7 @@ class Classifiers:
                 random_state=0,
                 verbose=verbose,
                 n_jobs=n_jobs,
+                scoring='f1_weighted',
             )
         ]
 
@@ -274,29 +281,31 @@ class Regressors:
                 cv=k_folds,
                 verbose=verbose,
                 n_jobs=n_jobs,
+                scoring='r2',
                 random_state=0
             ),
             HalvingRandomSearchCV(
                 estimator=ExtraTreesRegressor(random_state=0),
                 param_distributions={
-                    'n_estimators': [100, 300],
-                    'max_depth': [8, 15, None],
-                    'max_features': ['log2', 'sqrt'],
+                    'n_estimators': [100],
+                    'criterion': ["gini", "entropy"],
+                    'max_features': np.arange(0.05, 1.00, 0.05),
                     'min_samples_split': [2, 5, 10, 15, 20],
                     'min_samples_leaf': [1, 2, 5, 10],
+                    'bootstrap': [True, False]
                 },
                 cv=k_folds,
                 verbose=verbose,
                 n_jobs=n_jobs,
+                scoring='r2',
                 random_state=0
             ),
             HalvingRandomSearchCV(
                 estimator=GradientBoostingRegressor(random_state=0),
                 param_distributions={
-                    'n_estimators': [100, 300],
+                    'n_estimators': [100],
                     'loss': ["ls", "lad", "huber", "quantile"],
-                    'learning_rate': [1e-3, 1e-2, 1e-1, 0.5, 1.],
-                    'max_depth': [8, 15, None],
+                    'learning_rate': [1e-3, 1e-2, 1e-1, 1.],
                     'max_features': ['log2', 'sqrt'],
                     'min_samples_split': [2, 5, 10, 15, 20],
                     'min_samples_leaf': [1, 2, 5, 10],
@@ -305,41 +314,45 @@ class Regressors:
                 cv=k_folds,
                 verbose=verbose,
                 n_jobs=n_jobs,
+                scoring='r2',
                 random_state=0
             ),
             HalvingRandomSearchCV(
                 estimator=AdaBoostRegressor(random_state=0),
                 param_distributions={
-                    'n_estimators': [100, 300],
-                    'learning_rate': [1e-3, 1e-2, 1e-1, 0.5, 1.],
+                    'n_estimators': [100],
+                    'learning_rate': [1e-3, 1e-2, 1e-1, 1.],
                     'loss': ["linear", "square", "exponential"]
                 },
                 cv=k_folds,
                 verbose=verbose,
                 n_jobs=n_jobs,
+                scoring='r2',
                 random_state=0
             ),
             HalvingRandomSearchCV(
                 estimator=DecisionTreeRegressor(random_state=0),
                 param_distributions={
                     'max_depth': range(1, 11),
-                    'min_samples_split': range(2, 21),
-                    'min_samples_leaf': range(1, 21)
+                    'min_samples_split': [2, 5, 10, 15, 20],
+                    'min_samples_leaf': [1, 2, 5, 10],
                 },
                 cv=k_folds,
                 verbose=verbose,
                 n_jobs=n_jobs,
+                scoring='r2',
                 random_state=0
             ),
             HalvingRandomSearchCV(
                 estimator=KNeighborsRegressor(n_jobs=n_jobs),
                 param_distributions={
-                    'n_neighbors': [2, 4, 8, 10],
+                    'n_neighbors': [2, 4, 8, 10, 12],
                     'p': [1, 2]
                 },
                 cv=k_folds,
                 verbose=verbose,
                 n_jobs=n_jobs,
+                scoring='r2',
                 random_state=0
             ),
             HalvingRandomSearchCV(
@@ -350,6 +363,7 @@ class Regressors:
                 cv=k_folds,
                 verbose=verbose,
                 n_jobs=n_jobs,
+                scoring='r2',
                 random_state=0
             ),
             HalvingRandomSearchCV(
@@ -360,6 +374,7 @@ class Regressors:
                 cv=k_folds,
                 verbose=verbose,
                 n_jobs=n_jobs,
+                scoring='r2',
                 random_state=0
             ),
             HalvingRandomSearchCV(
@@ -370,6 +385,7 @@ class Regressors:
                 cv=k_folds,
                 verbose=verbose,
                 n_jobs=n_jobs,
+                scoring='r2',
                 random_state=0
             ),
             HalvingRandomSearchCV(
@@ -385,6 +401,7 @@ class Regressors:
                 cv=k_folds,
                 verbose=verbose,
                 n_jobs=n_jobs,
+                scoring='r2',
                 random_state=0
             ),
             HalvingRandomSearchCV(
@@ -399,6 +416,7 @@ class Regressors:
                 cv=k_folds,
                 verbose=verbose,
                 n_jobs=n_jobs,
+                scoring='r2',
                 random_state=0
             ),
             HalvingRandomSearchCV(
@@ -406,7 +424,7 @@ class Regressors:
                     n_jobs=n_jobs,
                     random_state=0),
                 param_distributions={
-                    'n_estimators': [100, 300],
+                    'max_iter': [100],
                     'max_features': ['log2', 'sqrt', ],
                     'min_samples_split': [2, 5, 10, 15, 20],
                     'min_samples_leaf': [1, 2, 5, 10],
@@ -414,6 +432,7 @@ class Regressors:
                 cv=k_folds,
                 verbose=verbose,
                 n_jobs=n_jobs,
+                scoring='r2',
                 random_state=0
             ),
             HalvingRandomSearchCV(
@@ -421,8 +440,8 @@ class Regressors:
                     n_jobs=n_jobs,
                     random_state=0),
                 param_distributions={
-                    'n_estimators': [100, 300],
-                    'learning_rate': [1e-3, 1e-2, 1e-1, 0.5, 1.],
+                    'n_estimators': [100],
+                    'learning_rate': [1e-3, 1e-2, 1e-1, 1.],
                     'min_child_weight': range(1, 21),
                     'subsample': np.arange(0.05, 1.0, 0.05),
                     'min_child_weight': range(1, 21),
@@ -430,6 +449,7 @@ class Regressors:
                 cv=k_folds,
                 verbose=verbose,
                 n_jobs=n_jobs,
+                scoring='r2',
                 random_state=0
             ),
             HalvingRandomSearchCV(
@@ -439,13 +459,11 @@ class Regressors:
                     'penalty': ['elasticnet'],
                     'alpha': [0.0, 0.01, 0.001],
                     'learning_rate': ['invscaling', 'constant'],
-                    'l1_ratio': [0.25, 0.0, 1.0, 0.75, 0.5],
-                    'eta0': [0.1, 1.0, 0.01],
-                    'power_t': [0.5, 0.0, 1.0, 0.1, 10.0, 50.0]
                 },
                 cv=k_folds,
                 verbose=verbose,
                 n_jobs=n_jobs,
+                scoring='r2',
                 random_state=0
             )
         ]
