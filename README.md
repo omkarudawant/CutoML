@@ -8,7 +8,7 @@
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](https://github.com/omkarudawant/CutoML/pulls)
 [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/omkarudawant/CutoML)
 
-A lightweight automl library.
+CutoML is a lightweight automl library, highly optimized to give you the best possible model depending on your datasets very quickly.
 
 
 Installation
@@ -53,4 +53,6 @@ X_train, X_test, y_train, y_test = train_test_split(dataset.data,
 ctr = CutoRegressor(k_folds=3, n_jobs=-1, verbose=1)
 ctr.fit(X=X_train, y=y_train)
 ```
+
+More Updates Coming Soon... 😄
 
