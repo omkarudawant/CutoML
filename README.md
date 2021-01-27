@@ -1,4 +1,4 @@
-<img src="https://user-images.githubusercontent.com/51676294/105076115-ac83e100-5ab0-11eb-8743-9a6dcc21cf45.png" width="72%"></img>
+<img src="https://user-images.githubusercontent.com/51676294/105076115-ac83e100-5ab0-11eb-8743-9a6dcc21cf45.png" width="90%"></img>
 
 
 [![PyPI version](https://badge.fury.io/py/cutoml.svg)](https://pypi.org/project/cutoml/)
