@@ -56,3 +56,8 @@ ctr.fit(X=X_train, y=y_train)
 
 More Updates Coming Soon... 😄
 
+
+Contact
+---------
+
+We would like feedback from the community. If you have feature suggestions, support questions or general comments, please email us at omkarudawant97@gmail.com
