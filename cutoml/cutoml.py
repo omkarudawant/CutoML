@@ -31,6 +31,7 @@ from imblearn.pipeline import Pipeline as imblearn_pipeline
 from imblearn.over_sampling import SMOTE
 from pathos.multiprocessing import ProcessingPool as Pool
 from pathos import multiprocessing
+# import multiprocessing
 from collections import Counter
 import numpy as np
 import time
@@ -40,10 +41,15 @@ import warnings
 
 
 class CutoClassifier:
-    def __init__(self, k_folds=3, oversample=False, n_jobs=2, verbose=0):
-        self.models = Classifiers(
-            k_folds=k_folds, n_jobs=n_jobs, verbose=verbose)
-        self.models = self.models.models
+    def __init__(self, k_folds=3, oversample=False, n_jobs=1, verbose=0, random_state=0):
+        self.random_state = random_state
+        classifiers_config = Classifiers(
+            k_folds=k_folds,
+            n_jobs=n_jobs,
+            verbose=verbose,
+            random_state=self.random_state
+        )
+        self.models = classifiers_config.models
         self.oversample = oversample
         self.best_estimator = None
         self.n_jobs = n_jobs
@@ -62,26 +68,35 @@ class CutoClassifier:
 
     def fit(self, X, y):
         X_train, X_test, y_train, y_test = train_test_split(
-            X, y, test_size=0.2, random_state=0
+            X, y, test_size=0.2, random_state=self.random_state
         )
 
         if self.oversample:
             over_sampler = SMOTE(
-                random_state=0,
+                random_state=self.random_state,
                 k_neighbors=3,
                 n_jobs=self.n_jobs
             )
-            X_train, y_train = over_sampler.fit_resample(X_train, y_train)
+            X_train, y_train = over_sampler.fit_resample(
+                X_train, y_train
+            )
 
         start_time = time.time()
+
         pool = Pool()
         try:
-            *trained_pipelines, = tqdm.tqdm(pool.imap(lambda x: self._model_fitter(x,
-                                                                                   X_train,
-                                                                                   y_train),
-                                                      self.models),
-                                            total=len(self.models),
-                                            desc='Optimization in progress')
+            *trained_pipelines, = tqdm.tqdm(
+                pool.imap(
+                    lambda x: self._model_fitter(x,
+                                                 X_train,
+                                                 y_train),
+                    self.models,
+                    chunksize=len(self.models) // 2
+                ),
+                total=len(self.models),
+                desc='Optimization in progress'
+            )
+
             end_time = time.time()
         except KeyboardInterrupt:
             pool.terminate()
@@ -128,10 +143,15 @@ class CutoClassifier:
 
 
 class CutoRegressor:
-    def __init__(self, k_folds=3, n_jobs=2, verbose=0):
-        self.models = Regressors(
-            k_folds=k_folds, n_jobs=n_jobs, verbose=verbose)
-        self.models = self.models.models
+    def __init__(self, k_folds=3,  n_jobs=1, verbose=0, random_state=0):
+        self.random_state = random_state
+        regressors_config = Regressors(
+            k_folds=k_folds,
+            n_jobs=n_jobs,
+            verbose=verbose,
+            random_state=self.random_state
+        )
+        self.models = regressors_config.models
         self.best_estimator = None
         self.n_jobs = n_jobs
 
@@ -145,22 +165,28 @@ class CutoRegressor:
                 rgr = rgr.fit(X, y)
             return rgr
         except Exception as e:
+            print(e)
             pass
 
     def fit(self, X, y):
         X_train, X_test, y_train, y_test = train_test_split(
-            X, y, test_size=0.2, random_state=0
+            X, y, test_size=0.2, random_state=self.random_state
         )
         start_time = time.time()
         pool = Pool()
         try:
-            *trained_pipelines, = tqdm.tqdm(pool.imap(lambda x: self._model_fitter(x,
-                                                                                   X_train,
-                                                                                   y_train),
-                                                      self.models),
-                                            total=len(self.models),
-                                            desc='Optimization in progress'
-                                            )
+            *trained_pipelines, = tqdm.tqdm(
+                pool.imap(
+                    lambda x: self._model_fitter(x,
+                                                 X_train,
+                                                 y_train),
+                    self.models,
+                    chunksize=len(self.models) // 2
+                ),
+                total=len(self.models),
+                desc='Optimization in progress'
+            )
+
             end_time = time.time()
         except KeyboardInterrupt:
             pool.terminate()
@@ -168,7 +194,6 @@ class CutoRegressor:
         finally:
             pool.close()
             pool.join()
-        # print(timer(start=start_time, end=end_time))
 
         trained_models = dict()
         for pipeline in trained_pipelines:

@@ -8,7 +8,7 @@ if __name__ == "__main__":
         dataset.data, dataset.target, test_size=0.25, random_state=0
     )
 
-    ctr = CutoRegressor(k_folds=3, n_jobs=-1, verbose=0)
+    ctr = CutoRegressor(k_folds=3, n_jobs=-1, verbose=0, random_state=0)
     ctr.fit(X=X_train, y=y_train)
     print(ctr.score(X=X_test, y=y_test))
     print(ctr.best_estimator.named_steps["regression_model"].best_estimator_)
