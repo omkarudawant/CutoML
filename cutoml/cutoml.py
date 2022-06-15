@@ -17,27 +17,18 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-from cutoml.utils import regression_metrics
-from cutoml.utils import classification_metrics
-from cutoml.utils import timer
-from cutoml.config import Classifiers
-from cutoml.config import Regressors
+import time
+import warnings
 
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler
-from sklearn.preprocessing import MinMaxScaler
-from sklearn.pipeline import Pipeline
-from imblearn.pipeline import Pipeline as imblearn_pipeline
+import tqdm
 from imblearn.over_sampling import SMOTE
 from pathos.multiprocessing import ProcessingPool as Pool
-from pathos import multiprocessing
-# import multiprocessing
-from collections import Counter
-import numpy as np
-import time
-import json
-import tqdm
-import warnings
+from sklearn.model_selection import train_test_split
+from sklearn.pipeline import Pipeline
+
+from cutoml.config import Classifiers
+from cutoml.config import Regressors
+from cutoml.utils import timer
 
 
 class CutoClassifier:
@@ -84,26 +75,28 @@ class CutoClassifier:
         start_time = time.time()
 
         pool = Pool()
-        try:
-            *trained_pipelines, = tqdm.tqdm(
-                pool.imap(
-                    lambda x: self._model_fitter(x,
-                                                 X_train,
-                                                 y_train),
-                    self.models,
-                    chunksize=len(self.models) // 2
-                ),
-                total=len(self.models),
-                desc='Optimization in progress'
-            )
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            try:
+                *trained_pipelines, = tqdm.tqdm(
+                    pool.imap(
+                        lambda x: self._model_fitter(x,
+                                                     X_train,
+                                                     y_train),
+                        self.models,
+                        chunksize=len(self.models) // 2
+                    ),
+                    total=len(self.models),
+                    desc='Optimization in progress'
+                )
 
-            end_time = time.time()
-        except KeyboardInterrupt:
-            pool.terminate()
-            pool.join()
-        finally:
-            pool.close()
-            pool.join()
+                end_time = time.time()
+            except KeyboardInterrupt:
+                pool.terminate()
+                pool.join()
+            finally:
+                pool.close()
+                pool.join()
         print(timer(start=start_time, end=end_time))
         trained_models = dict()
         for pipeline in trained_pipelines:
@@ -174,27 +167,29 @@ class CutoRegressor:
         )
         start_time = time.time()
         pool = Pool()
-        try:
-            *trained_pipelines, = tqdm.tqdm(
-                pool.imap(
-                    lambda x: self._model_fitter(x,
-                                                 X_train,
-                                                 y_train),
-                    self.models,
-                    chunksize=len(self.models) // 2
-                ),
-                total=len(self.models),
-                desc='Optimization in progress'
-            )
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            try:
+                *trained_pipelines, = tqdm.tqdm(
+                    pool.imap(
+                        lambda x: self._model_fitter(x,
+                                                     X_train,
+                                                     y_train),
+                        self.models,
+                        chunksize=len(self.models) // 2
+                    ),
+                    total=len(self.models),
+                    desc='Optimization in progress'
+                )
 
-            end_time = time.time()
-        except KeyboardInterrupt:
-            pool.terminate()
-            pool.join()
-        finally:
-            pool.close()
-            pool.join()
-
+                end_time = time.time()
+            except KeyboardInterrupt:
+                pool.terminate()
+                pool.join()
+            finally:
+                pool.close()
+                pool.join()
+        print(timer(start=start_time, end=end_time))
         trained_models = dict()
         for pipeline in trained_pipelines:
             if pipeline:
