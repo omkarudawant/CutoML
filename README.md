@@ -31,9 +31,9 @@ from sklearn import datasets
 dataset = datasets.load_digits()
 X_train, X_test, y_train, y_test = train_test_split(dataset.data,
                                                     dataset.target,
-                                                    test_size=0.2)
+                                                    test_size=0.25)
 
-ctc = CutoClassifier(k_folds=3, n_jobs=-1, verbose=1)
+ctc = CutoClassifier(k_folds=5, n_jobs=2, verbose=1)
 ctc.fit(X=X_train, y=y_train)
 ```
 
@@ -48,16 +48,8 @@ from sklearn import datasets
 dataset = datasets.load_boston()
 X_train, X_test, y_train, y_test = train_test_split(dataset.data,
                                                     dataset.target,
-                                                    test_size=0.2)
+                                                    test_size=0.25)
 
-ctr = CutoRegressor(k_folds=3, n_jobs=-1, verbose=1)
+ctr = CutoRegressor(k_folds=5, n_jobs=2, verbose=1)
 ctr.fit(X=X_train, y=y_train)
 ```
-
-More Updates Coming Soon... 😄
-
-
-Contact
----------
-
-We would like feedback from the community. If you have feature suggestions, support questions or general comments, please email us at omkarudawant97@gmail.com
