@@ -6,7 +6,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 setup(
     name='cutoml',
     packages=['cutoml'],
-    version='0.0.10',
+    version='0.0.11',
     license='gpl-3.0',
     description='A lightweight automl library',
     long_description=long_description,
@@ -14,7 +14,7 @@ setup(
     author='Omkar Udawant',
     author_email='omkarudawant97@gmail.com',
     url='https://github.com/omkarudawant/CutoML',
-    download_url='https://github.com/omkarudawant/CutoML/archive/0.0.10.tar.gz',
+    download_url='https://github.com/omkarudawant/CutoML/archive/refs/tags/0.0.11.tar.gz',
     keywords=[
         'pipeline optimization',
         'automated hyperparameter optimization',
@@ -22,19 +22,20 @@ setup(
         'machine learning',
     ],
     install_requires=[
-        'scipy>=1.5.1',
-        'numpy>=1.19.1',
-        'scikit-learn>=0.24.0',
-        'xgboost<1.3.0',
-        'tqdm>=4.56.0',
-        'pathos>=0.2.7',
-        'imbalanced-learn>=0.8.0',
+        'scipy==1.5.1',
+        'numpy==1.19.5',
+        'scikit-learn==0.24.2',
+        'pydantic==1.8.2',
+        'xgboost==1.2.1',
+        'tqdm==4.62.3',
+        'pathos==0.2.8',
+        'imbalanced-learn==0.8.1',
         'setuptools==58.0.3'
     ],
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Intended Audience :: Developers',
-        'Topic :: Scientific/Engineering :: Artificial Intelligence :: Software Development',
+        'Topic :: Scientific/Engineering :: Artificial Intelligence',
         'License :: OSI Approved :: GNU Lesser General Public License v3 ('
         'LGPLv3)',
         'Programming Language :: Python :: 3.6',
