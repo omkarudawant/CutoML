@@ -1,7 +1,7 @@
 """
 CutoML - A lightweight automl framework for classification and regression tasks.
 
-Copyright (C) 2021  Omkar Udawant
+Copyright (C) 2022  Omkar Udawant
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by

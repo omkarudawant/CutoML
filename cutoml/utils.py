@@ -1,7 +1,7 @@
 """
 CutoML - A lightweight automl framework for classification and regression tasks.
 
-Copyright (C) 2021  Omkar Udawant
+Copyright (C) 2022  Omkar Udawant
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -45,7 +45,7 @@ def multi_class_roc_auc_score(y_true: np.array, y_pred: np.array,
 
 def mean_absolute_percentage_error(y_true, y_pred):
     mask = y_true != 0
-    return (np.fabs(y_true - y_pred)/y_true)[mask].mean()
+    return (np.fabs(y_true - y_pred) / y_true)[mask].mean()
 
 
 def classification_metrics(y_true: np.array, y_pred: np.array):

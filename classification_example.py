@@ -8,7 +8,7 @@ if __name__ == "__main__":
         dataset.data, dataset.target, test_size=0.25, random_state=0
     )
 
-    ctc = CutoClassifier(k_folds=5, n_jobs=2, verbose=0, random_state=1)
+    ctc = CutoClassifier(k_folds=5, n_jobs=2, random_state=0)
     ctc.fit(X=X_train, y=y_train)
     print(ctc.score(X=X_test, y=y_test))
     print(

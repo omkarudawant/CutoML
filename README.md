@@ -33,7 +33,7 @@ X_train, X_test, y_train, y_test = train_test_split(dataset.data,
                                                     dataset.target,
                                                     test_size=0.25)
 
-ctc = CutoClassifier(k_folds=5, n_jobs=2, verbose=1)
+ctc = CutoClassifier(k_folds=5, n_jobs=2)
 ctc.fit(X=X_train, y=y_train)
 ```
 
@@ -50,6 +50,6 @@ X_train, X_test, y_train, y_test = train_test_split(dataset.data,
                                                     dataset.target,
                                                     test_size=0.25)
 
-ctr = CutoRegressor(k_folds=5, n_jobs=2, verbose=1)
+ctr = CutoRegressor(k_folds=5, n_jobs=2)
 ctr.fit(X=X_train, y=y_train)
 ```

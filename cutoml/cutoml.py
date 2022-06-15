@@ -1,7 +1,7 @@
 """
 CutoML - A lightweight automl framework for classification and regression tasks.
 
-Copyright (C) 2021 Omkar Udawant
+Copyright (C) 2022 Omkar Udawant
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -16,19 +16,19 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
-
-import time
-import warnings
-
 import tqdm
 from imblearn.over_sampling import SMOTE
-from pathos.multiprocessing import ProcessingPool as Pool
+from pathos.multiprocessing import ProcessingPool
 from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline
 
 from cutoml.config import Classifiers
 from cutoml.config import Regressors
 from cutoml.utils import timer
+import time
+import warnings
+
+warnings.filterwarnings('ignore')
 
 
 class CutoClassifier:
@@ -74,7 +74,7 @@ class CutoClassifier:
 
         start_time = time.time()
 
-        pool = Pool()
+        pool = ProcessingPool()
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
             try:
@@ -87,7 +87,7 @@ class CutoClassifier:
                         chunksize=len(self.models) // 2
                     ),
                     total=len(self.models),
-                    desc='Optimization in progress'
+                    desc='Optimizing'
                 )
 
                 end_time = time.time()
@@ -136,7 +136,7 @@ class CutoClassifier:
 
 
 class CutoRegressor:
-    def __init__(self, k_folds=3,  n_jobs=1, verbose=0, random_state=0):
+    def __init__(self, k_folds=3, n_jobs=1, verbose=0, random_state=0):
         self.random_state = random_state
         regressors_config = Regressors(
             k_folds=k_folds,
@@ -148,7 +148,7 @@ class CutoRegressor:
         self.best_estimator = None
         self.n_jobs = n_jobs
 
-    def _model_fitter(sef, model, X, y):
+    def _model_fitter(self, model, X, y):
         try:
             rgr = Pipeline([
                 ('regression_model', model)
@@ -166,7 +166,7 @@ class CutoRegressor:
             X, y, test_size=0.2, random_state=self.random_state
         )
         start_time = time.time()
-        pool = Pool()
+        pool = ProcessingPool()
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
             try:
@@ -179,7 +179,7 @@ class CutoRegressor:
                         chunksize=len(self.models) // 2
                     ),
                     total=len(self.models),
-                    desc='Optimization in progress'
+                    desc='Optimizing'
                 )
 
                 end_time = time.time()
