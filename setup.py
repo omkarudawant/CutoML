@@ -23,7 +23,7 @@ setup(
     ],
     install_requires=[
         'scipy==1.5.1',
-        'numpy==1.19.5',
+        'numpy>=1.21',
         'scikit-learn==0.24.2',
         'pydantic==1.8.2',
         'xgboost==1.2.1',
